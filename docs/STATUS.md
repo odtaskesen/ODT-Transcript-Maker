@@ -43,7 +43,27 @@
   macOS SDK sürümleri uyumsuz, ayrıca kullanıcı düzeyindeki Clang modül önbelleği
   bu çalışma ortamından yazılabilir değil. Bu uygulama kaynak hatası değildir.
 
-## Sıradaki geliştirme
+## ChatGPT metin araçları — uygulanan
 
-- Segment bölme, birleştirme ve kalite uyarıları.
-- Dalga formu ve videoya altyazı gömme, ayrı kapsam olarak değerlendirilir.
+- Doğrudan `ChatGPT Yazım Kontrolü` eylemi, konuşmanın kelimelerini ve akışını
+  değiştirmeden yalnızca açık imla/noktalama hatalarını düzeltmesini ister.
+- `ChatGPT Araçları` menüsünde metinden ayrı çıktı üreten özet, başlık fikri ve
+  video açıklaması eylemleri bulunur.
+- Her eylem istemi panoya kopyalar ve ChatGPT'yi açar; uygulamadaki metin
+  değiştirilmez.
+- `ChatGPTTranscriptAction.swift` type-check ve `ContentView.swift` sözdizimi
+  denetiminden geçti. Tüm kaynakların doğrudan `swiftc` type-check'i,
+  SwiftPM'in oluşturduğu `Bundle.module` bağlamı olmadan çalıştırılamaz.
+
+## Ürün odağı
+
+- Ana kullanım, yerel transkripsiyonla elde edilen metni sosyal medya üretim
+  akışında kullanmaktır; SRT düzenleme destekleyici bir işlevdir.
+- README, GitHub portföyünde ürün kararlarını, yerel-öncelikli teknik yaklaşımı
+  ve içerik üretim iş akışını gösterecek şekilde güncellendi.
+
+## Kapanış durumu
+
+- Video player, metin odaklı üretim akışı ve ChatGPT metin araçları ürünün
+  planlanan son kapsamıdır.
+- Yeni özellik geliştirme planlanmıyor; ürün bu sürümüyle tamamlandı.

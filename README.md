@@ -1,41 +1,77 @@
 # ODT Altyazıcı
 
-ODT Altyazıcı, macOS üzerinde video ve ses dosyalarından altyazı üretmek için hazırlanmış sade bir masaüstü uygulamasıdır.
+**Yerel çalışan macOS transkripsiyon ve içerik hazırlama aracı.** Sosyal medya
+üretiminde video veya ses kayıtlarını hızlıca düzenlenebilir metne dönüştürmek;
+ardından o metinden doğru yazılmış bir döküm, özet, başlık fikri veya video
+açıklaması üretmek için geliştirdim.
 
-Uygulama terminal kullanmadan çalışır. Kullanıcı videoyu seçer veya sürükler, `.srt` ve/veya `.txt` çıktısını seçer, ardından **Altyazı Oluştur** butonuna basar.
+Bu proje, sadece bir altyazı üreticisinden ziyade içerik üretim akışındaki
+manuel ve dağınık adımları tek bir masaüstü arayüzünde toplama yaklaşımımı
+gösterir: dosya seçimi, yerel transkripsiyon, metin düzenleme, güvenli kayıt ve
+ChatGPT'ye kontrollü içerik hazırlama istemleri.
 
-## Özellikler
+## Neyi çözüyor?
 
-- Native macOS arayüzü
-- Sürükle-bırak dosya seçimi
-- Dil seçimi: Türkçe, İngilizce, Almanca, Felemenkçe, İspanyolca
-- Sabit model: `large-v3-turbo`
-- Apple Silicon GPU (Metal) hızlandırması
-- Çıktılar: `.srt` ve `.txt`
-- İşlem sırasında gerçek ilerleme çubuğu, yüzde, geçen süre ve kalan süre tahmini
-- Metin oluştukça canlı önizleme
-- İşlemi istediğiniz anda durdurma
-- Uygulama içinde altyazı metnini görme, düzenleme ve `.txt` olarak kaydetme
-- SRT'yi segment segment görüntüleme, düzenleme ve kaydetme
-- Sağda yeniden boyutlandırılabilir, oran koruyan video player paneli
-- SRT segmenti seçimiyle videoya gitme ve oynatma sırasında aktif segmenti vurgulama
-- Oynat/durdur, zaman çubuğu, ses, hız ve önceki/sonraki segment kontrolleri
-- Seçili SRT segmentinin başlangıç ve bitişini oynatma konumundan ayarlama
-- Metin ve SRT önizleme sekmeleri
-- Metin içinde arama ve sonuç sayacı
-- Mevcut `.srt`/`.txt` dosyalarının üzerine yazmadan önce onay
-- Kaydedilmemiş düzenlemeler için kaybolmaya karşı onay
-- Kaydedilmedi / kaydedildi durumu
-- Son kullanılan klasörü hatırlama
-- İşlem bitince dil, süre, çıktılar ve konum özeti
-- İşlem bitince bildirim gösterme tercihi
-- Metni veya SRT içeriğini panoya kopyalama
-- Altyazı metnini ChatGPT'de çalışmak için panoya kopyalayıp ChatGPT'yi açma
-- Çıktıları videonun bulunduğu klasöre kaydetme
-- İşlem bitince bildirim
-- Sonuç klasörünü Finder'da açma
+Bir sosyal medya videosunun ham kaydından sonra içerik ekibinin genellikle
+önce konuşma metnine ihtiyacı olur. ODT Altyazıcı bu metni terminal, bulut
+zorunluluğu veya dağınık araç geçişleri olmadan üretir. Metin; videocuya kesit
+notu iletmek, içerik fikri çıkarmak veya paylaşım hazırlamak için doğrudan
+kullanılabilir.
 
-## Kullanıcı İçin
+Varsayılan transkripsiyon akışı tamamen yereldir. ChatGPT araçları isteğe
+bağlıdır: uygulama istemi yalnızca panoya kopyalar ve ChatGPT'yi açar; metni
+otomatik olarak göndermez ya da uygulama içinde değiştirmez.
+
+## Ürün özellikleri
+
+### Yerel transkripsiyon
+
+- Native SwiftUI macOS arayüzü ve sürükle-bırak dosya seçimi
+- Apple Silicon Metal hızlandırmalı `large-v3-turbo` Whisper modeli
+- Türkçe, İngilizce, Almanca, Felemenkçe ve İspanyolca desteği
+- `.txt` ve `.srt` çıktı seçimi; çoklu dosya kuyruğu, canlı ilerleme ve iptal
+- İşlem sürerken canlı metin, süre/kalan süre tahmini ve tamamlanma özeti
+
+### Metinle çalışma
+
+- Metin içinde arama, düzenleme, panoya kopyalama ve güvenli `.txt` kaydı
+- Kaydedilmemiş değişiklik ve mevcut dosyanın üstüne yazma için koruyucu onaylar
+- Son kullanılan klasörü hatırlama; sonuç klasörünü Finder'da açma
+- SRT segment düzenleme, kaydetme ve oran koruyan video player ile zaman senkronu
+
+### İçerik üretim araçları
+
+- **ChatGPT Yazım Kontrolü:** Konuşmanın kelimelerini, üslubunu ve akışını
+  koruyarak yalnızca açık imla/noktalama düzeltmesi ister.
+- **Özet Çıkar:** Uzun konuşmadan ayrı, kısa bir özet üretir.
+- **Başlık Fikirleri:** Konuşma metni üzerinden video başlığı önerileri hazırlar.
+- **Açıklama Yazdır:** Metinden ayrı bir video açıklaması üretir.
+
+Bu eylemler uygulama içindeki metni değiştirmez. İstemler panoya kopyalanır;
+kullanıcı ChatGPT'de kendi çalışma alanı ve proje bağlamıyla devam eder.
+
+## Örnek iş akışı
+
+1. Video veya ses kaydını uygulamaya sürükle.
+2. Yerel transkripsiyon bitene kadar ilerlemeyi canlı izle.
+3. Düzenlenebilir metni gözden geçir, gerekiyorsa `.txt` olarak kaydet veya kopyala.
+4. Yazım kontrolü, özet, başlık veya açıklama için uygun ChatGPT aracını seç.
+5. Çıktıyı içerik planında, videocu iletişiminde veya paylaşım hazırlığında kullan.
+
+## Teknik yaklaşım
+
+- **Uygulama:** Swift 6, SwiftUI ve AppKit
+- **Medya:** AVFoundation player, FFmpeg ile ses hazırlama
+- **Transkripsiyon:** Yerel `whisper.cpp`, `large-v3-turbo` ve Apple Silicon Metal
+- **Veri yaklaşımı:** Video, ses ve altyazı dosyaları varsayılan olarak cihazda kalır
+- **Kullanıcı deneyimi:** Kuyruk, canlı durum, iptal, güvenli kayıt ve geri
+  dönüşü mümkün arayüz davranışları
+
+Bu kararlar; içerik üretimi gibi hızlı teslim gerektiren işlerde kullanıcıyı
+tarayıcı, terminal ve birden fazla dosya arasında dolaştırmayan, güvenilir bir
+masaüstü deneyimi hedefler.
+
+## Kullanım
 
 Dağıtım için önerilen dosya:
 
@@ -143,13 +179,9 @@ Bu uygulama aşağıdaki açık kaynak bileşenlerle çalışır:
 
 Dağıtım yaparken ilgili lisans ve atıf metinlerini korumak önerilir.
 
-## Proje Durumu
+## Proje durumu
 
-Bu proje ilk çalışan prototip aşamasındadır. Ekip içi kullanım için hazırlanmıştır.
-
-Henüz yapılabilecek iyileştirmeler:
-
-- Apple Developer hesabıyla imzalama ve notarization
-- Intel Mac için ayrı paket
-- Daha gelişmiş hata raporlama
-- DMG arka planı ve görsel düzenleme
+Ürünün planlanan kapsamı tamamlandı. Yerel transkripsiyon, düzenlenebilir metin
+akışı, video player, SRT desteği ve isteğe bağlı ChatGPT içerik araçları son
+sürümdedir. Bu depo, sosyal medya üretimi için yerel-öncelikli bir masaüstü
+ürünü tasarlama ve uygulama yaklaşımımı gösteren tamamlanmış portföy projesidir.

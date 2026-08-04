@@ -28,7 +28,6 @@ struct ContentView: View {
     @State private var transcriptFile: URL?
     @State private var srtFile: URL?
     @State private var saveMessage = ""
-    @State private var showCopiedConfirmation = false
     @State private var processingStartedAt: Date?
     @State private var progressFraction: Double?
     @State private var liveTranscript = ""
@@ -549,9 +548,22 @@ struct ContentView: View {
                 }
 
                 Button {
-                    sendToChatGPT()
+                    sendToChatGPT(.spellingCheck)
                 } label: {
-                    Label(showCopiedConfirmation ? "Kopyalandı" : "ChatGPT", systemImage: "sparkles")
+                    Label(ChatGPTTranscriptAction.spellingCheck.title, systemImage: ChatGPTTranscriptAction.spellingCheck.systemImage)
+                }
+                .disabled(transcriptText.isEmpty)
+
+                Menu {
+                    ForEach([ChatGPTTranscriptAction.summary, .titleIdeas, .description]) { action in
+                        Button {
+                            sendToChatGPT(action)
+                        } label: {
+                            Label(action.title, systemImage: action.systemImage)
+                        }
+                    }
+                } label: {
+                    Label("ChatGPT Araçları", systemImage: "sparkles")
                 }
                 .disabled(transcriptText.isEmpty)
             }
@@ -1222,7 +1234,6 @@ struct ContentView: View {
         isRunning = true
         status = .running
         saveMessage = ""
-        showCopiedConfirmation = false
 
         var wasCancelled = false
 
@@ -1401,7 +1412,6 @@ struct ContentView: View {
         transcriptFile = nil
         srtFile = nil
         saveMessage = ""
-        showCopiedConfirmation = false
         selectedSegmentID = nil
         playerSeekRequest = nil
         searchQuery = ""
@@ -1534,17 +1544,12 @@ struct ContentView: View {
         saveMessage = activeEditorTab == .srt && !isViewingRunningItem ? "SRT kopyalandı" : "Metin kopyalandı"
     }
 
-    private func sendToChatGPT() {
-        let prompt = """
-        Aşağıdaki altyazı metni üzerinde çalışmanı istiyorum. Yazım hatalarını düzelt, anlamı koru ve gerekirse daha akıcı hale getir:
-
-        \(transcriptText)
-        """
+    private func sendToChatGPT(_ action: ChatGPTTranscriptAction) {
+        let prompt = action.prompt(for: transcriptText)
 
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(prompt, forType: .string)
-        showCopiedConfirmation = true
-        saveMessage = "ChatGPT için kopyalandı"
+        saveMessage = action.copiedMessage
 
         if let url = URL(string: "https://chatgpt.com/") {
             NSWorkspace.shared.open(url)
