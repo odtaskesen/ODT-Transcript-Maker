@@ -1,0 +1,16 @@
+.DS_Store
+
+.build/
+.build-cache/
+.build-tools/
+
+dist/
+
+Vendor/Models/*
+Vendor/Tools/*
+
+!Vendor/Models/.gitkeep
+!Vendor/Tools/.gitkeep
+
+*.dmg
+*.app
