@@ -17,6 +17,9 @@ Uygulama terminal kullanmadan çalışır. Kullanıcı videoyu seçer veya sür�
 - İşlemi istediğiniz anda durdurma
 - Uygulama içinde altyazı metnini görme, düzenleme ve `.txt` olarak kaydetme
 - SRT'yi segment segment görüntüleme, düzenleme ve kaydetme
+- Sağda yeniden boyutlandırılabilir, oran koruyan video player paneli
+- SRT segmenti seçimiyle videoya gitme ve oynatma sırasında aktif segmenti vurgulama
+- Oynat/durdur, zaman çubuğu, ses, hız ve önceki/sonraki segment kontrolleri
 - Metin ve SRT önizleme sekmeleri
 - Metin içinde arama ve sonuç sayacı
 - Mevcut `.srt`/`.txt` dosyalarının üzerine yazmadan önce onay
