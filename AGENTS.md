@@ -1,11 +1,25 @@
 # ODT Altyazıcı — Codex çalışma rehberi
 
-## Başlangıç
+## Oturum handoff'u
+
+Bu kurallar her yeni Codex sohbetinde kendiliğinden uygulanır; kullanıcıdan
+yeniden istemesini bekleme.
+
+### Başlangıçta
 
 Bir geliştirmeye başlamadan önce `README.md`, `docs/PROJECT_CONTEXT.md` ve
-`docs/STATUS.md` dosyalarını oku. Ardından `git status` ve ilgili kaynak
-dosyalarını incele. Uygulamanın çalışma mantığını yalnızca ekran görüntüsünden
-değil, önce kaynak koddan değerlendir.
+`docs/STATUS.md` dosyalarını oku. Ardından `git status` ve son üç commit'i,
+sonra da ilgili kaynak dosyalarını incele. Uygulamanın çalışma mantığını
+yalnızca ekran görüntüsünden değil, önce kaynak koddan değerlendir.
+
+### Bitirirken
+
+Kod, ürün kararı veya doğrulama durumu değiştiyse `docs/STATUS.md` dosyasını
+yapılanlar, doğrulama ve sıradaki adımlarla güncelle. Kalıcı mimari/ürün
+kararlarını yalnızca gerektiğinde `docs/PROJECT_CONTEXT.md` dosyasına ekle;
+genel Codex çalışma kuralları değişmedikçe `AGENTS.md`yi güncelleme. İlgili
+dosyaları mantıklı, küçük bir committe kaydet ve GitHub'a gönder; beklenmeyen
+dış etki, silme veya erişim genişletme gerektiren durumlarda kullanıcıya sor.
 
 ## Ürün ilkeleri
 
