@@ -20,13 +20,14 @@
 - Uygulama hedefi macOS 15.4 SDK ile debug ve release olarak derlendi.
 - `scripts/check_srt.sh` ile SRT parse/serialize, zaman kodu dönüşümü ve segment sınırı kontrolleri çalıştı.
 - Üretilen 9:16 ve 16:9 MP4 örnekleri gerçek uygulamada kırpılmadan/esnetilmeden açıldı.
+- Üretilen 1:1 MP4 örneği gerçek uygulamada siyah bantlar içinde, kaynak oranı korunarak açıldı.
 - Dosya geçişi, oynat/durdur ve ilerleyen zaman çubuğu gerçek uygulamada doğrulandı.
+- Konuşmalı 9:16 test videosu ile yerel transkripsiyon, oluşan SRT segmentinden seek, oynatma sırasında aktif segment ve düzenlenen SRT'nin diske kaydı uçtan uca doğrulandı.
 - Release `.app` paketi `dist/ODT Altyazıcı.app` altında üretildi.
 
 ## Sıradaki doğrulama
 
-- Gerçek SRT üreten konuşmalı örnekte segment seçimi, aktif segment geçişi ve SRT kaydetmeyi uçtan uca yeniden doğrula.
-- 1:1 örnek ve panel splitter sürüklemesini son manuel QA turunda kontrol et.
+- Son manuel QA turunda, minimum pencere genişliğinin üzerindeki bir pencerede panel splitter sürüklemesini doğrula. Otomasyon işaretçiyi bölücüye taşıdı; ancak mevcut minimum genişlikte konum değişimini gözlemlemek mümkün olmadı.
 
 ## İlk sürüm sonrası
 
