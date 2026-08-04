@@ -20,6 +20,7 @@ Uygulama terminal kullanmadan çalışır. Kullanıcı videoyu seçer veya sür�
 - Sağda yeniden boyutlandırılabilir, oran koruyan video player paneli
 - SRT segmenti seçimiyle videoya gitme ve oynatma sırasında aktif segmenti vurgulama
 - Oynat/durdur, zaman çubuğu, ses, hız ve önceki/sonraki segment kontrolleri
+- Seçili SRT segmentinin başlangıç ve bitişini oynatma konumundan ayarlama
 - Metin ve SRT önizleme sekmeleri
 - Metin içinde arama ve sonuç sayacı
 - Mevcut `.srt`/`.txt` dosyalarının üzerine yazmadan önce onay

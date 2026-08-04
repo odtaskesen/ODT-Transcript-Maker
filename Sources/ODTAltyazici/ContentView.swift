@@ -59,7 +59,9 @@ struct ContentView: View {
                     hasVideo: activeItem?.mediaInfo?.hasVideo ?? true,
                     segments: segments,
                     selectedSegmentID: $selectedSegmentID,
-                    seekRequest: playerSeekRequest
+                    seekRequest: playerSeekRequest,
+                    setSelectedSegmentStart: { updateSelectedSegmentStart(at: $0) },
+                    setSelectedSegmentEnd: { updateSelectedSegmentEnd(at: $0) }
                 )
                 .frame(minWidth: 320, idealWidth: 400, maxWidth: 620, maxHeight: .infinity)
             }
@@ -1430,6 +1432,42 @@ struct ContentView: View {
         guard let seconds = SRTDocument.seconds(from: segment.startTime) else { return }
         selectedSegmentID = segment.id
         playerSeekRequest = PlayerSeekRequest(seconds: seconds)
+    }
+
+    private func updateSelectedSegmentStart(at seconds: TimeInterval) {
+        updateSelectedSegmentBoundary(at: seconds, isStart: true)
+    }
+
+    private func updateSelectedSegmentEnd(at seconds: TimeInterval) {
+        updateSelectedSegmentBoundary(at: seconds, isStart: false)
+    }
+
+    private func updateSelectedSegmentBoundary(at seconds: TimeInterval, isStart: Bool) {
+        guard let selectedSegmentID,
+              let index = segments.firstIndex(where: { $0.id == selectedSegmentID }),
+              let timecode = SRTDocument.timecode(from: seconds),
+              let existingStart = SRTDocument.seconds(from: segments[index].startTime),
+              let existingEnd = SRTDocument.seconds(from: segments[index].endTime) else {
+            return
+        }
+
+        if isStart {
+            guard seconds < existingEnd else {
+                saveMessage = "Başlangıç, bitişten önce olmalı"
+                return
+            }
+            segments[index].startTime = timecode
+        } else {
+            guard seconds > existingStart else {
+                saveMessage = "Bitiş, başlangıçtan sonra olmalı"
+                return
+            }
+            segments[index].endTime = timecode
+        }
+
+        isSRTDirty = true
+        saveMessage = "Kaydedilmedi"
+        updateActiveItemFromBuffer()
     }
 
     private func saveEditedTranscript() {

@@ -140,6 +140,8 @@ struct VideoPlayerPanel: View {
     let segments: [SubtitleSegment]
     @Binding var selectedSegmentID: UUID?
     let seekRequest: PlayerSeekRequest?
+    let setSelectedSegmentStart: (TimeInterval) -> Void
+    let setSelectedSegmentEnd: (TimeInterval) -> Void
 
     @StateObject private var controller = VideoPlayerController()
     @State private var volume: Double = 1
@@ -163,6 +165,7 @@ struct VideoPlayerPanel: View {
                 timeline
                 playbackControls
                 segmentControls
+                timingControls
             }
 
             Spacer(minLength: 0)
@@ -309,6 +312,33 @@ struct VideoPlayerPanel: View {
 
             Text(selectedSegmentLabel)
                 .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .buttonStyle(.bordered)
+    }
+
+    private var timingControls: some View {
+        HStack(spacing: 10) {
+            Button {
+                setSelectedSegmentStart(controller.currentTime)
+            } label: {
+                Label("Başlangıç", systemImage: "flag.checkered")
+            }
+            .disabled(selectedIndex == nil)
+            .help("Seçili segmentin başlangıcını oynatma konumuna ayarla")
+
+            Button {
+                setSelectedSegmentEnd(controller.currentTime)
+            } label: {
+                Label("Bitiş", systemImage: "flag.2.crossed")
+            }
+            .disabled(selectedIndex == nil)
+            .help("Seçili segmentin bitişini oynatma konumuna ayarla")
+
+            Spacer()
+
+            Text("Konum \(Self.formatTime(controller.currentTime))")
+                .font(.caption.monospacedDigit())
                 .foregroundStyle(.secondary)
         }
         .buttonStyle(.bordered)

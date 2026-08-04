@@ -5,6 +5,7 @@ enum SRTDocumentChecks {
     static func main() {
         parsesAndSerializesMultilineSegments()
         convertsValidTimecodesDeterministically()
+        serializesTimecodesDeterministically()
         findsActiveSegmentUsingHalfOpenTimeRange()
         print("SRT doğrulamaları başarılı.")
     }
@@ -44,6 +45,19 @@ enum SRTDocumentChecks {
         expect(abs(hourTimecode - 3_723.5) < 0.000_1, "Saatli zaman kodu hatalı çevrildi.")
         expect(SRTDocument.seconds(from: "00:61:00,000") == nil, "Geçersiz dakika kabul edildi.")
         expect(SRTDocument.seconds(from: "geçersiz") == nil, "Geçersiz zaman kodu kabul edildi.")
+    }
+
+    private static func serializesTimecodesDeterministically() {
+        expect(
+            SRTDocument.timecode(from: 62.345) == "00:01:02,345",
+            "Saniye değeri SRT zaman koduna hatalı çevrildi."
+        )
+        expect(
+            SRTDocument.timecode(from: 3_723.5) == "01:02:03,500",
+            "Saatli SRT zaman kodu hatalı üretildi."
+        )
+        expect(SRTDocument.timecode(from: -0.001) == nil, "Negatif zaman kodu üretildi.")
+        expect(SRTDocument.timecode(from: .infinity) == nil, "Sonsuz zaman kodu üretildi.")
     }
 
     private static func findsActiveSegmentUsingHalfOpenTimeRange() {

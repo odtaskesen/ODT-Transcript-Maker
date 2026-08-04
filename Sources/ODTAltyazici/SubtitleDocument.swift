@@ -90,6 +90,20 @@ enum SRTDocument {
         return hours * 3_600 + minutes * 60 + seconds
     }
 
+    static func timecode(from seconds: TimeInterval) -> String? {
+        guard seconds.isFinite, seconds >= 0 else {
+            return nil
+        }
+
+        let totalMilliseconds = Int((seconds * 1_000).rounded())
+        let hours = totalMilliseconds / 3_600_000
+        let minutes = (totalMilliseconds % 3_600_000) / 60_000
+        let wholeSeconds = (totalMilliseconds % 60_000) / 1_000
+        let milliseconds = totalMilliseconds % 1_000
+
+        return String(format: "%02d:%02d:%02d,%03d", hours, minutes, wholeSeconds, milliseconds)
+    }
+
     static func activeSegmentID(at seconds: TimeInterval, in segments: [SubtitleSegment]) -> UUID? {
         segments.first { segment in
             guard let start = self.seconds(from: segment.startTime),

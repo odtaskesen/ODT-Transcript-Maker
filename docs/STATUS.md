@@ -13,6 +13,7 @@
 - Segment seçimiyle seek ve oynatma zamanına göre aktif segment vurgusu/otomatik kaydırma.
 - Oynat/durdur, zaman çubuğu, ses ve 0,5×–2× hız seçimi.
 - Önceki/sonraki segment ile Boşluk, ⌥← ve ⌥→ klavye kısayolları.
+- Seçili segmentin başlangıç/bitiş zamanını oynatma konumundan ayarlama; geçersiz başlangıç-bitiş sırasını engelleme.
 - SRT zaman kodu dönüşümü ve aktif segment seçimi ayrı, deterministik yardımcıya taşındı.
 
 ## Doğrulama
@@ -23,14 +24,14 @@
 - Üretilen 1:1 MP4 örneği gerçek uygulamada siyah bantlar içinde, kaynak oranı korunarak açıldı.
 - Dosya geçişi, oynat/durdur ve ilerleyen zaman çubuğu gerçek uygulamada doğrulandı.
 - Konuşmalı 9:16 test videosu ile yerel transkripsiyon, oluşan SRT segmentinden seek, oynatma sırasında aktif segment ve düzenlenen SRT'nin diske kaydı uçtan uca doğrulandı.
+- Konuşmalı örnekte player 1,286 sn konumundayken segment başlangıcı ayarlandı; SRT dosyasına `00:00:01,287` olarak yazılıp kaydedildi.
 - Release `.app` paketi `dist/ODT Altyazıcı.app` altında üretildi.
 
 ## Sıradaki doğrulama
 
 - Son manuel QA turunda, minimum pencere genişliğinin üzerindeki bir pencerede panel splitter sürüklemesini doğrula. Otomasyon işaretçiyi bölücüye taşıdı; ancak mevcut minimum genişlikte konum değişimini gözlemlemek mümkün olmadı.
 
-## İlk sürüm sonrası
+## Sıradaki geliştirme
 
-- Başlangıç/bitiş zamanını oynatma konumundan ayarlama.
 - Segment bölme, birleştirme ve kalite uyarıları.
 - Dalga formu ve videoya altyazı gömme, ayrı kapsam olarak değerlendirilir.
