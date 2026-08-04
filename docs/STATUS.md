@@ -4,7 +4,7 @@
 
 - Yerel çalışan kaynak sürümü GitHub `main` dalına aktarıldı.
 - Kaynak, model/binary/DMG dosyalarından ayrı biçimde Git'te izleniyor.
-- Player geliştirmesi `feature/video-player-mvp` dalında sürüyor.
+- Video player MVP'si `main` dalına birleştirildi.
 
 ## Video player MVP — uygulanan
 
