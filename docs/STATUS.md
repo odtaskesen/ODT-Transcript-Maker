@@ -55,6 +55,13 @@
   denetiminden geçti. Tüm kaynakların doğrudan `swiftc` type-check'i,
   SwiftPM'in oluşturduğu `Bundle.module` bağlamı olmadan çalıştırılamaz.
 
+## Ürün odağı
+
+- Ana kullanım, yerel transkripsiyonla elde edilen metni sosyal medya üretim
+  akışında kullanmaktır; SRT düzenleme destekleyici bir işlevdir.
+- README, GitHub portföyünde ürün kararlarını, yerel-öncelikli teknik yaklaşımı
+  ve içerik üretim iş akışını gösterecek şekilde güncellendi.
+
 ## Sıradaki geliştirme
 
 - Segment bölme, birleştirme ve kalite uyarıları.

@@ -2,9 +2,11 @@
 
 ## Amaç
 
-ODT Altyazıcı, video ve ses dosyalarından terminal kullanmadan altyazı üreten
-yerel bir macOS uygulamasıdır. Çıktılar SRT ve TXT'dir; uygulama içinde metin
-ve SRT segmentleri düzenlenebilir.
+ODT Altyazıcı, sosyal medya üretim akışlarında video ve ses dosyalarını terminal
+kullanmadan düzenlenebilir metne dönüştüren yerel bir macOS uygulamasıdır.
+SRT ve TXT çıktısı üretebilir; ancak ana kullanım, konuşma metnini videocuya,
+içerik planına veya paylaşım hazırlığına aktarmaktır. Uygulama içinde metin ve
+SRT segmentleri düzenlenebilir.
 
 ## Mevcut mimari
 
@@ -24,6 +26,8 @@ Whisper modeli `large-v3-turbo`dur ve Apple Silicon Metal hızlandırmasıyla
 - Kullanıcı işlem sırasında ilerleme, canlı metin ve iptal seçeneği görür.
 - SRT/TXT kaydı mevcut dosyanın üzerine yazmadan önce onay ister.
 - Kaydedilmemiş düzenlemeler kaybolmadan önce kullanıcı uyarılır.
+- Metin odaklı akış, SRT düzenleme işlevlerinden bağımsız olarak hızlı ve
+  kullanılabilir kalır.
 
 ## Aktif ürün kararı: video player
 
@@ -38,6 +42,7 @@ içinde çalışan bir AI düzeltme dahil değildir.
 ## ChatGPT metin araçları
 
 Uygulama metni kendisi değiştirmez veya buluta kaydetmez. Kullanıcının açık
-eylemiyle seçilen ChatGPT istemi panoya kopyalanır ve ChatGPT açılır. Yazım
-kontrolü istemi konuşmanın kelimelerini ve üslubunu korur; özet, başlık fikri
-ve açıklama istemleri ayrı çıktılar üretir.
+eylemiyle seçilen ChatGPT istemi panoya kopyalanır ve ChatGPT açılır; kullanıcı
+isterse metni kendi ChatGPT projesine yapıştırır. Yazım kontrolü istemi
+konuşmanın kelimelerini ve üslubunu korur; özet, başlık fikri ve açıklama
+istemleri ayrı çıktılar üretir.
