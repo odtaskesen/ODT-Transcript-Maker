@@ -62,7 +62,8 @@
 - README, GitHub portföyünde ürün kararlarını, yerel-öncelikli teknik yaklaşımı
   ve içerik üretim iş akışını gösterecek şekilde güncellendi.
 
-## Sıradaki geliştirme
+## Kapanış durumu
 
-- Segment bölme, birleştirme ve kalite uyarıları.
-- Dalga formu ve videoya altyazı gömme, ayrı kapsam olarak değerlendirilir.
+- Video player, metin odaklı üretim akışı ve ChatGPT metin araçları ürünün
+  planlanan son kapsamıdır.
+- Yeni özellik geliştirme planlanmıyor; ürün bu sürümüyle tamamlandı.

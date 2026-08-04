@@ -179,9 +179,9 @@ Bu uygulama aşağıdaki açık kaynak bileşenlerle çalışır:
 
 Dağıtım yaparken ilgili lisans ve atıf metinlerini korumak önerilir.
 
-## Proje durumu ve sonraki adımlar
+## Proje durumu
 
-Video player MVP'si tamamlandı. Bir sonraki ürün kararları, gerçek kullanımda
-en fazla zaman kazandıran ihtiyaçlara göre verilecek. Dağıtım kalitesini
-artırmak için Apple Developer hesabıyla imzalama/notarization, daha gelişmiş
-hata raporlama ve DMG görsel düzenlemesi ayrıca değerlendirilebilir.
+Ürünün planlanan kapsamı tamamlandı. Yerel transkripsiyon, düzenlenebilir metin
+akışı, video player, SRT desteği ve isteğe bağlı ChatGPT içerik araçları son
+sürümdedir. Bu depo, sosyal medya üretimi için yerel-öncelikli bir masaüstü
+ürünü tasarlama ve uygulama yaklaşımımı gösteren tamamlanmış portföy projesidir.

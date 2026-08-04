@@ -29,15 +29,15 @@ Whisper modeli `large-v3-turbo`dur ve Apple Silicon Metal hızlandırmasıyla
 - Metin odaklı akış, SRT düzenleme işlevlerinden bağımsız olarak hızlı ve
   kullanılabilir kalır.
 
-## Aktif ürün kararı: video player
+## Uygulanan video player
 
-Player sağ tarafta ayrı bir çalışma paneli olacak. Tasarım 9:16 videoyu
-önceliklendirir; kaynak oranı korunur. İlk teslimde player, SRT segmentiyle
-çift yönlü senkron çalışmalıdır: segmente tıklama ilgili zamana gider, oynatma
-aktif segmenti vurgular.
+Player sağ tarafta ayrı bir çalışma paneli olarak uygulandı. Tasarım 9:16
+videoyu önceliklendirir; kaynak oranı korunur. Player, SRT segmentiyle çift
+yönlü senkron çalışır: segmente tıklama ilgili zamana gider, oynatma aktif
+segmenti vurgular.
 
-İlk player teslim kapsamına dalga formu, altyazıyı MP4'e gömme ve uygulama
-içinde çalışan bir AI düzeltme dahil değildir.
+Dalga formu, altyazıyı MP4'e gömme ve uygulama içinde çalışan bir AI düzeltme
+nihai ürün kapsamı dışındadır.
 
 ## ChatGPT metin araçları
 
@@ -46,3 +46,8 @@ eylemiyle seçilen ChatGPT istemi panoya kopyalanır ve ChatGPT açılır; kulla
 isterse metni kendi ChatGPT projesine yapıştırır. Yazım kontrolü istemi
 konuşmanın kelimelerini ve üslubunu korur; özet, başlık fikri ve açıklama
 istemleri ayrı çıktılar üretir.
+
+## Kapanış durumu
+
+Bu belge, ürünün son kapsamını kaydeder. Yeni özellik geliştirme planlanmıyor;
+bundan sonraki çalışma yalnızca mevcut ürünün gerektiğinde bakımını kapsar.
