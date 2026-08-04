@@ -16,6 +16,10 @@
   gereksinimi ve tek seferlik kurulum bilgisini açıkça gösterir.
 - Mevcut bileşen hazırlama akışı modelin ilerlemesini gösterir ve tamamlanınca
   kullanıcıyı altyazı oluşturma durumuna getirir.
+- Xcode 26.6 ile release uygulaması derlendi; model içermeyen `.app` 52 MB ve
+  doğrulanmış `.dmg` 24 MB olarak üretildi.
+- `scripts/check_srt.sh` başarılı çalıştı; oluşturulan uygulama paketinde
+  `Resources/Models/ggml-large-v3-turbo.bin` bulunmadığı kontrol edildi.
 
 ## Video player MVP — uygulanan
 
