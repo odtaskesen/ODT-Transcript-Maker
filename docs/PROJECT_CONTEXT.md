@@ -1,0 +1,36 @@
+# Proje bağlamı
+
+## Amaç
+
+ODT Altyazıcı, video ve ses dosyalarından terminal kullanmadan altyazı üreten
+yerel bir macOS uygulamasıdır. Çıktılar SRT ve TXT'dir; uygulama içinde metin
+ve SRT segmentleri düzenlenebilir.
+
+## Mevcut mimari
+
+- `Sources/ODTAltyazici/ContentView.swift`: SwiftUI arayüzü, dosya kuyruğu,
+  editör durumu ve kullanıcı akışları.
+- `Sources/ODTAltyazici/TranscriptionService.swift`: FFmpeg ile ses hazırlama,
+  Whisper çalıştırma, canlı ilerleme/segment olayları ve çıktı yazımı.
+- `Sources/ODTAltyazici/ComponentInstaller.swift`: araç ve model hazırlığı.
+- `scripts/package_app.sh` ve `scripts/package_dmg.sh`: uygulama/DMG paketi.
+
+Whisper modeli `large-v3-turbo`dur ve Apple Silicon Metal hızlandırmasıyla
+çalışır. Büyük model ve araç binary'leri Git dışında tutulur.
+
+## Korunacak davranışlar
+
+- Çoklu dosya kuyruğu sıralı işlenir.
+- Kullanıcı işlem sırasında ilerleme, canlı metin ve iptal seçeneği görür.
+- SRT/TXT kaydı mevcut dosyanın üzerine yazmadan önce onay ister.
+- Kaydedilmemiş düzenlemeler kaybolmadan önce kullanıcı uyarılır.
+
+## Aktif ürün kararı: video player
+
+Player sağ tarafta ayrı bir çalışma paneli olacak. Tasarım 9:16 videoyu
+önceliklendirir; kaynak oranı korunur. İlk teslimde player, SRT segmentiyle
+çift yönlü senkron çalışmalıdır: segmente tıklama ilgili zamana gider, oynatma
+aktif segmenti vurgular.
+
+İlk teslim kapsamına dalga formu, altyazıyı MP4'e gömme ve AI düzeltme dahil
+değildir.
