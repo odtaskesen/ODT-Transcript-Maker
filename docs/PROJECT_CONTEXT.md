@@ -32,5 +32,12 @@ Player sağ tarafta ayrı bir çalışma paneli olacak. Tasarım 9:16 videoyu
 çift yönlü senkron çalışmalıdır: segmente tıklama ilgili zamana gider, oynatma
 aktif segmenti vurgular.
 
-İlk teslim kapsamına dalga formu, altyazıyı MP4'e gömme ve AI düzeltme dahil
-değildir.
+İlk player teslim kapsamına dalga formu, altyazıyı MP4'e gömme ve uygulama
+içinde çalışan bir AI düzeltme dahil değildir.
+
+## ChatGPT metin araçları
+
+Uygulama metni kendisi değiştirmez veya buluta kaydetmez. Kullanıcının açık
+eylemiyle seçilen ChatGPT istemi panoya kopyalanır ve ChatGPT açılır. Yazım
+kontrolü istemi konuşmanın kelimelerini ve üslubunu korur; özet, başlık fikri
+ve açıklama istemleri ayrı çıktılar üretir.

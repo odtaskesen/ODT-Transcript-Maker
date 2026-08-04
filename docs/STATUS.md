@@ -43,6 +43,18 @@
   macOS SDK sürümleri uyumsuz, ayrıca kullanıcı düzeyindeki Clang modül önbelleği
   bu çalışma ortamından yazılabilir değil. Bu uygulama kaynak hatası değildir.
 
+## ChatGPT metin araçları — uygulanan
+
+- Doğrudan `ChatGPT Yazım Kontrolü` eylemi, konuşmanın kelimelerini ve akışını
+  değiştirmeden yalnızca açık imla/noktalama hatalarını düzeltmesini ister.
+- `ChatGPT Araçları` menüsünde metinden ayrı çıktı üreten özet, başlık fikri ve
+  video açıklaması eylemleri bulunur.
+- Her eylem istemi panoya kopyalar ve ChatGPT'yi açar; uygulamadaki metin
+  değiştirilmez.
+- `ChatGPTTranscriptAction.swift` type-check ve `ContentView.swift` sözdizimi
+  denetiminden geçti. Tüm kaynakların doğrudan `swiftc` type-check'i,
+  SwiftPM'in oluşturduğu `Bundle.module` bağlamı olmadan çalıştırılamaz.
+
 ## Sıradaki geliştirme
 
 - Segment bölme, birleştirme ve kalite uyarıları.

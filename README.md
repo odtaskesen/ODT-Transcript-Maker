@@ -30,7 +30,7 @@ Uygulama terminal kullanmadan çalışır. Kullanıcı videoyu seçer veya sür�
 - İşlem bitince dil, süre, çıktılar ve konum özeti
 - İşlem bitince bildirim gösterme tercihi
 - Metni veya SRT içeriğini panoya kopyalama
-- Altyazı metnini ChatGPT'de çalışmak için panoya kopyalayıp ChatGPT'yi açma
+- Metni ChatGPT'de yazım kontrolü, özet, başlık fikri veya açıklama için panoya kopyalayıp ChatGPT'yi açma
 - Çıktıları videonun bulunduğu klasöre kaydetme
 - İşlem bitince bildirim
 - Sonuç klasörünü Finder'da açma
