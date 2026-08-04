@@ -36,6 +36,8 @@ struct ContentView: View {
     @State private var showUnsavedChangesDialog = false
     @State private var overwriteTargets: [String] = []
     @State private var showOverwriteDialog = false
+    @State private var selectedSegmentID: UUID?
+    @State private var playerSeekRequest: PlayerSeekRequest?
 
     private let service = TranscriptionService()
     private let installer = ComponentInstaller()
@@ -48,10 +50,24 @@ struct ContentView: View {
 
             Divider()
 
-            editorPanel
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            HSplitView {
+                editorPanel
+                    .frame(minWidth: 500, maxWidth: .infinity, maxHeight: .infinity)
+
+                VideoPlayerPanel(
+                    mediaURL: activeItem?.url,
+                    hasVideo: activeItem?.mediaInfo?.hasVideo ?? true,
+                    segments: segments,
+                    selectedSegmentID: $selectedSegmentID,
+                    seekRequest: playerSeekRequest,
+                    setSelectedSegmentStart: { updateSelectedSegmentStart(at: $0) },
+                    setSelectedSegmentEnd: { updateSelectedSegmentEnd(at: $0) }
+                )
+                .frame(minWidth: 320, idealWidth: 400, maxWidth: 620, maxHeight: .infinity)
+            }
+            .accessibilityIdentifier("player-workspace-split-view")
         }
-        .frame(minWidth: 980, minHeight: 680)
+        .frame(minWidth: 1_220, minHeight: 720)
         .background(appBackground)
         .task {
             refreshComponentStatus()
@@ -631,15 +647,23 @@ struct ContentView: View {
                 }
                 .background(Color(nsColor: .textBackgroundColor))
             } else {
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 6) {
-                        ForEach($segments) { $segment in
-                            segmentRow($segment)
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        LazyVStack(alignment: .leading, spacing: 6) {
+                            ForEach($segments) { $segment in
+                                segmentRow($segment)
+                            }
+                        }
+                        .padding(10)
+                    }
+                    .background(Color(nsColor: .textBackgroundColor))
+                    .onChange(of: selectedSegmentID) { _, segmentID in
+                        guard let segmentID else { return }
+                        withAnimation(.easeOut(duration: 0.18)) {
+                            proxy.scrollTo(segmentID, anchor: .center)
                         }
                     }
-                    .padding(10)
                 }
-                .background(Color(nsColor: .textBackgroundColor))
             }
         }
     }
@@ -671,8 +695,17 @@ struct ContentView: View {
         }
         .padding(.horizontal, 10)
         .padding(.vertical, 8)
-        .background(Color.secondary.opacity(0.055))
+        .id(segment.wrappedValue.id)
+        .background(
+            segment.wrappedValue.id == selectedSegmentID
+                ? Color.accentColor.opacity(0.18)
+                : Color.secondary.opacity(0.055)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 6))
+        .contentShape(Rectangle())
+        .onTapGesture {
+            selectSegment(segment.wrappedValue)
+        }
     }
 
     private var editorFooter: some View {
@@ -1093,6 +1126,8 @@ struct ContentView: View {
 
     private func loadBufferFromItem(_ id: UUID?) {
         activeQueueID = id
+        selectedSegmentID = nil
+        playerSeekRequest = nil
 
         guard let id, let item = queue.first(where: { $0.id == id }) else {
             transcriptText = ""
@@ -1367,6 +1402,8 @@ struct ContentView: View {
         srtFile = nil
         saveMessage = ""
         showCopiedConfirmation = false
+        selectedSegmentID = nil
+        playerSeekRequest = nil
         searchQuery = ""
         processingStartedAt = nil
         progressFraction = nil
@@ -1390,6 +1427,48 @@ struct ContentView: View {
         } else {
             saveEditedSRT()
         }
+    }
+
+    private func selectSegment(_ segment: SubtitleSegment) {
+        guard let seconds = SRTDocument.seconds(from: segment.startTime) else { return }
+        selectedSegmentID = segment.id
+        playerSeekRequest = PlayerSeekRequest(seconds: seconds)
+    }
+
+    private func updateSelectedSegmentStart(at seconds: TimeInterval) {
+        updateSelectedSegmentBoundary(at: seconds, isStart: true)
+    }
+
+    private func updateSelectedSegmentEnd(at seconds: TimeInterval) {
+        updateSelectedSegmentBoundary(at: seconds, isStart: false)
+    }
+
+    private func updateSelectedSegmentBoundary(at seconds: TimeInterval, isStart: Bool) {
+        guard let selectedSegmentID,
+              let index = segments.firstIndex(where: { $0.id == selectedSegmentID }),
+              let timecode = SRTDocument.timecode(from: seconds),
+              let existingStart = SRTDocument.seconds(from: segments[index].startTime),
+              let existingEnd = SRTDocument.seconds(from: segments[index].endTime) else {
+            return
+        }
+
+        if isStart {
+            guard seconds < existingEnd else {
+                saveMessage = "Başlangıç, bitişten önce olmalı"
+                return
+            }
+            segments[index].startTime = timecode
+        } else {
+            guard seconds > existingStart else {
+                saveMessage = "Bitiş, başlangıçtan sonra olmalı"
+                return
+            }
+            segments[index].endTime = timecode
+        }
+
+        isSRTDirty = true
+        saveMessage = "Kaydedilmedi"
+        updateActiveItemFromBuffer()
     }
 
     private func saveEditedTranscript() {
@@ -1529,108 +1608,24 @@ enum QueueItemStatus: Equatable {
     case failed
 }
 
-struct SubtitleSegment: Identifiable {
-    let id = UUID()
-    var index: Int
-    var startTime: String
-    var endTime: String
-    var text: String
-}
-
-enum SRTDocument {
-    static func parse(_ raw: String) -> [SubtitleSegment] {
-        guard !raw.isEmpty else {
-            return []
-        }
-
-        let normalized = raw.replacingOccurrences(of: "\r\n", with: "\n")
-        var result: [SubtitleSegment] = []
-
-        for block in normalized.components(separatedBy: "\n\n") {
-            let lines = block
-                .split(separator: "\n", omittingEmptySubsequences: true)
-                .map(String.init)
-                .filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-
-            guard lines.count >= 2 else { continue }
-
-            var lineIndex = 0
-            var cueNumber = result.count + 1
-            if let parsed = Int(lines[0].trimmingCharacters(in: .whitespaces)) {
-                cueNumber = parsed
-                lineIndex = 1
-            }
-
-            guard lineIndex < lines.count,
-                  let match = lines[lineIndex].firstMatch(
-                    of: /(\d{2,}:\d{2}:\d{2}[,.]\d{3})\s*-->\s*(\d{2,}:\d{2}:\d{2}[,.]\d{3})/
-                  ) else {
-                continue
-            }
-
-            let textLines = lines[(lineIndex + 1)...]
-            let text = textLines
-                .map { $0.trimmingCharacters(in: .whitespaces) }
-                .joined(separator: "\n")
-
-            guard !text.isEmpty else { continue }
-
-            result.append(SubtitleSegment(
-                index: cueNumber,
-                startTime: String(match.1),
-                endTime: String(match.2),
-                text: text
-            ))
-        }
-
-        return result
-    }
-
-    static func serialize(_ segments: [SubtitleSegment]) -> String {
-        guard !segments.isEmpty else {
-            return ""
-        }
-
-        return segments.enumerated().map { offset, segment in
-            "\(offset + 1)\n\(segment.startTime) --> \(segment.endTime)\n\(segment.text)"
-        }.joined(separator: "\n\n") + "\n"
-    }
-
-    static func displayTime(_ raw: String) -> String {
-        let main = raw.split(separator: ",").first.map(String.init)
-            ?? raw.split(separator: ".").first.map(String.init)
-            ?? raw
-        let parts = main.split(separator: ":").map(String.init)
-
-        guard parts.count == 3 else {
-            return raw
-        }
-
-        let hours = Int(parts[0]) ?? 0
-        if hours > 0 {
-            return "\(hours):\(parts[1]):\(parts[2])"
-        }
-
-        let minutes = Int(parts[1]) ?? 0
-        return "\(minutes):\(parts[2])"
-    }
-}
-
 struct MediaFileInfo {
     let size: String
     let duration: String?
     let durationSeconds: Double?
+    let hasVideo: Bool
 
     static func load(url: URL) async -> MediaFileInfo {
         let asset = AVURLAsset(url: url)
         let loadedDuration = try? await asset.load(.duration)
+        let videoTracks = try? await asset.loadTracks(withMediaType: .video)
         let seconds = loadedDuration.map(CMTimeGetSeconds) ?? 0
         let hasDuration = seconds.isFinite && seconds > 0
 
         return MediaFileInfo(
             size: formatSize(url),
             duration: hasDuration ? formatDuration(seconds) : nil,
-            durationSeconds: hasDuration ? seconds : nil
+            durationSeconds: hasDuration ? seconds : nil,
+            hasVideo: !(videoTracks?.isEmpty ?? true)
         )
     }
 
