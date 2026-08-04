@@ -29,7 +29,19 @@
 
 ## Sıradaki doğrulama
 
-- Son manuel QA turunda, minimum pencere genişliğinin üzerindeki bir pencerede panel splitter sürüklemesini doğrula. Otomasyon işaretçiyi bölücüye taşıdı; ancak mevcut minimum genişlikte konum değişimini gözlemlemek mümkün olmadı.
+- Player çalışma alanı `player-workspace-split-view` erişilebilirlik kimliğiyle
+  hedeflenebilir. Son manuel QA turunda minimum pencere genişliğinin üzerindeki
+  bir pencerede panel splitter sürüklemesini doğrula. Mevcut UI otomasyonu tam
+  ekrana geçişte uygulamayı yeniden başlattığı için bu son sürükleme adımı
+  güvenilir biçimde otomatikleştirilemedi.
+
+## Bu turdaki doğrulama notu
+
+- Release `.app` açıldı; player çalışma alanında AppKit `HSplitView` bölücüsü
+  erişilebilirlik ağacında görüldü ve geniş pencerede yerleşim korundu.
+- Kaynak derlemesi bu makinede doğrulanamadı: seçili Swift derleyicisi ile
+  macOS SDK sürümleri uyumsuz, ayrıca kullanıcı düzeyindeki Clang modül önbelleği
+  bu çalışma ortamından yazılabilir değil. Bu uygulama kaynak hatası değildir.
 
 ## Sıradaki geliştirme
 

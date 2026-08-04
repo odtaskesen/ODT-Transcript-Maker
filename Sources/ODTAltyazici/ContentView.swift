@@ -65,6 +65,7 @@ struct ContentView: View {
                 )
                 .frame(minWidth: 320, idealWidth: 400, maxWidth: 620, maxHeight: .infinity)
             }
+            .accessibilityIdentifier("player-workspace-split-view")
         }
         .frame(minWidth: 1_220, minHeight: 720)
         .background(appBackground)
