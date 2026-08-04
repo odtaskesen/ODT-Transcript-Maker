@@ -41,10 +41,9 @@ if compgen -G "$ROOT_DIR/Vendor/Tools/*.dylib" > /dev/null; then
   cp -P "$ROOT_DIR"/Vendor/Tools/*.dylib "$APP_DIR/Contents/Resources/Tools/"
 fi
 
-if [ -f "$ROOT_DIR/Vendor/Models/ggml-large-v3-turbo.bin" ]; then
-  mkdir -p "$APP_DIR/Contents/Resources/Models"
-  cp "$ROOT_DIR/Vendor/Models/ggml-large-v3-turbo.bin" "$APP_DIR/Contents/Resources/Models/ggml-large-v3-turbo.bin"
-fi
+# Whisper modeli dağıtım paketine bilinçli olarak eklenmez. Uygulama, ilk
+# açılışta kullanıcı onayıyla modeli Application Support klasörüne indirir.
+# Böylece 1,5 GB'lık model her DMG indirmesinin parçası olmaz.
 
 cat > "$APP_DIR/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

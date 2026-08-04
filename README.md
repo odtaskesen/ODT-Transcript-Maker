@@ -122,15 +122,33 @@ Paket şurada oluşur:
 dist/ODT Altyazıcı.dmg
 ```
 
-## Gerekli Bileşenler
+## İlk açılış kurulumu
 
-Dağıtıma hazır uygulama oluştururken aşağıdaki dosyalar varsa paket içine alınır:
+Dağıtım DMG'sine büyük Whisper modeli eklenmez. Kullanıcı ilk açılışta
+**Modeli İndir ve Hazırla** seçeneğini onayladığında uygulama, yaklaşık 1,62 GB
+boyutundaki `large-v3-turbo` modelini indirir ve yerel Uygulama Desteği
+klasöründe saklar. Bu işlem yalnızca bir kez yapılır; video, ses ve altyazı
+dosyaları cihazda kalmaya devam eder.
+
+DMG'nin küçük kalması için pakette yalnızca çalıştırma araçları bulunur:
+
+```text
+ffmpeg
+whisper-cli
+gerekli Whisper/ggml çalışma kütüphaneleri
+```
+
+## Geliştirici bileşenleri
+
+Dağıtıma hazır uygulama oluştururken aşağıdaki araç dosyaları paket içine alınır:
 
 ```text
 Vendor/Tools/ffmpeg
 Vendor/Tools/whisper-cli
-Vendor/Models/ggml-large-v3-turbo.bin
 ```
+
+`Vendor/Models/ggml-large-v3-turbo.bin` yerel geliştirme için kullanılabilir,
+ancak `package_app.sh` bunu dağıtım uygulamasına kopyalamaz.
 
 `whisper-cli` ve gerekli `libwhisper` / `libggml` kütüphanelerini oluşturmak için:
 

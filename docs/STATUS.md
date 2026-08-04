@@ -5,6 +5,17 @@
 - Yerel çalışan kaynak sürümü GitHub `main` dalına aktarıldı.
 - Kaynak, model/binary/DMG dosyalarından ayrı biçimde Git'te izleniyor.
 - Video player MVP'si `main` dalına birleştirildi.
+- Dağıtım paketi Whisper `large-v3-turbo` modelini içermez. İlk açılışta
+  kullanıcı model indirmesini onaylar; araç binary'leri pakette kalır.
+
+## İlk açılışta model indirme — uygulanan
+
+- `package_app.sh`, yerelde `Vendor/Models` altında bulunsa bile 1,5 GB Whisper
+  modelini `.app` paketine kopyalamaz.
+- İlk açılıştaki kurulum kartı, yaklaşık 1,62 GB indirme, internet/boş alan
+  gereksinimi ve tek seferlik kurulum bilgisini açıkça gösterir.
+- Mevcut bileşen hazırlama akışı modelin ilerlemesini gösterir ve tamamlanınca
+  kullanıcıyı altyazı oluşturma durumuna getirir.
 
 ## Video player MVP — uygulanan
 

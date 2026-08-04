@@ -401,7 +401,7 @@ struct ContentView: View {
     private var componentsPanel: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(spacing: 12) {
-                Label("Kurulum Gerekli", systemImage: "wrench.and.screwdriver")
+                Label("İlk Kurulum Gerekli", systemImage: "arrow.down.circle")
                     .font(.headline)
 
                 Spacer()
@@ -411,12 +411,12 @@ struct ContentView: View {
                         await prepareComponents()
                     }
                 } label: {
-                    Label("Gerekli Bileşenleri Hazırla", systemImage: "arrow.down.circle")
+                    Label("Modeli İndir ve Hazırla", systemImage: "arrow.down.circle")
                 }
                 .disabled(isRunning)
             }
 
-            Text("Uygulamanın altyazı üretebilmesi için gerekli dosyalar hazırlanacak.")
+            Text("Altyazı oluşturmak için Whisper large-v3-turbo modeli indirilecek (yaklaşık 1,62 GB). İnternet bağlantısı ve yeterli boş disk alanı gerekir. Bu işlem yalnızca bir kez yapılır.")
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
@@ -1358,7 +1358,7 @@ struct ContentView: View {
     private func prepareComponents() async {
         isRunning = true
         status = .running
-        logText = "Gerekli dosyalar hazırlanıyor..."
+        logText = "İlk kurulum hazırlanıyor..."
 
         do {
             let newStatus = try await installer.prepare { message in
@@ -1369,7 +1369,7 @@ struct ContentView: View {
 
             componentStatus = newStatus
             status = queue.isEmpty ? .idle : .ready
-            logText = queue.isEmpty ? "Videoyu buraya sürükleyin veya seçin." : "Hazır. Altyazı oluşturabilirsiniz."
+            logText = queue.isEmpty ? "Kurulum tamamlandı. Videoyu buraya sürükleyin veya seçin." : "Kurulum tamamlandı. Altyazı oluşturabilirsiniz."
         } catch {
             refreshComponentStatus()
             status = .failed

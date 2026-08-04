@@ -18,7 +18,10 @@ SRT segmentleri düzenlenebilir.
 - `scripts/package_app.sh` ve `scripts/package_dmg.sh`: uygulama/DMG paketi.
 
 Whisper modeli `large-v3-turbo`dur ve Apple Silicon Metal hızlandırmasıyla
-çalışır. Büyük model ve araç binary'leri Git dışında tutulur.
+çalışır. Dağıtım paketi yalnızca `ffmpeg`, `whisper-cli` ve çalışma
+kütüphanelerini içerir; yaklaşık 1,62 GB model ilk açılışta kullanıcının
+onayıyla yerel Uygulama Desteği klasörüne indirilir. Büyük model ve araç
+binary'leri Git dışında tutulur.
 
 ## Korunacak davranışlar
 
