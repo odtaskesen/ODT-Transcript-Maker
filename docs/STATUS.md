@@ -1,5 +1,75 @@
 # Çalışma durumu
 
+## Web sürümü — tasarım dili uygulandı (yeni)
+
+- Kullanıcının referansı (makingsoftware.com stil analizi) sayfaya
+  uygulandı: Paper/Ink/Blueprint Blue palet, EB Garamond (serif, Arizona
+  ikamesi) + Departure Mono (yerelde barındırılan, SIL OFL), noktalı
+  bölücüler, dot-leader'lar, iç gölgeli "key button". Kırmızı/yeşil durum
+  rengi eklenmedi (tek vurgu rengi kuralına uyuldu).
+- Departure Mono'nun Türkçe karakterleri (İŞĞÇÖÜ) piksel karşılaştırmasıyla
+  doğrulandı; büyük harfe çevirme CSS ile yapılıyor, JS'de
+  `.toUpperCase()` yok.
+- Model indirme ilerlemesi artık tek, sıçramayan bir çubukla gösteriliyor
+  (kütüphanenin "progress_total" toplama olayı kullanılarak); "diskten mi
+  geldi, internetten mi indi" ayrımı da artık kullanıcıya doğru yazılıyor.
+- Bu Mac'te görsel olarak test edildi: boş durum, ilerleme, tamamlanmış
+  sekmeler, hata, iptal, 375px mobil genişlik.
+- `web/design-reference/` (kullanıcının verdiği üçüncü taraf stil
+  dosyaları) `.gitignore`'a eklendi, repoya girmiyor.
+- Ayrıntı: `docs/WEB_VERSION_PLAN.md` → "Tasarım dili — uygulanan".
+
+## Web sürümü — önbellekleme hatası bulundu ve çözüldü
+
+- Kullanıcı kendi Chrome'unda denedi: sayfa yeniden açılınca model yine
+  baştan indi, lite sürümdeki açık sorun doğrulandı.
+- Kök neden bulundu: Chrome'un Cache Storage'ı tek dosya ~250 MB'ı
+  aştığında "Unexpected internal error" ile sessizce başarısız oluyor
+  (bu Mac'te 50-900 MB arası dosyalarla ölçülüp doğrulandı). Whisper'ın
+  büyük `encoder`/`decoder` dosyaları bu sınırın üstünde.
+- Çözüm: `web/app/worker.js`'e büyük dosyaları ~128 MB'lık parçalara
+  bölüp ayrı ayrı önbellekleyen bir yardımcı (`ChunkedCache`) eklendi.
+- Doğrulama (bu Mac'te): önbellek temizlenip yeniden denendiğinde ilk
+  yükleme ~73 sn (parçalama ek yüküyle), sayfa yeniden açıldığında ise
+  ~12 sn'de (yeniden indirme olmadan) hazır oldu.
+- Doğrulama (kullanıcının kendi Chrome'unda): ilk yükleme ~70 sn, sayfa
+  yenilendiğinde ~9-10 sn — düzeltme gerçek kullanımda da çalışıyor.
+- Ayrıntı: `docs/WEB_VERSION_PLAN.md` → "Önbellekleme sorunu — bulundu ve
+  çözüldü".
+- Kapanış durumu: teknik fizibilite tamamlandı. Kalan konu yalnızca
+  barındırma/yayın kararı.
+
+## Web sürümü — fizibilite denemesi (yeni)
+
+- `feature/web-lite-spike` dalında, ayrı bir `web/spike/` klasöründe tek
+  sayfalık bir test kuruldu. Mac uygulamasına dokunulmadı.
+- Test: `onnx-community/whisper-large-v3-turbo` modeli, tarayıcıda WebGPU
+  üzerinden (Transformers.js, encoder fp16 + decoder q4), macOS'un Türkçe
+  seslendirmesiyle üretilen 19 saniyelik bir test sesiyle çalıştırıldı.
+- Sonuç: WebGPU bu Mac'te sorunsuz çalıştı, bozuk çıktı yok. Çevirme hızı
+  ses süresinin ~4 katı (19 sn ses, 4,8 sn'de çevrildi). Çıkan metin beklenen
+  metinle neredeyse birebir eşleşti (iki küçük TTS kaynaklı fark dışında).
+- Açık konu: model önbellekte kalıcı kalmadı, sayfa yeniden açılınca tekrar
+  indirildi. Kullanıcının kendi Chrome'unda ayrıca doğrulanmalı.
+- Ayrıntı ve tam ölçümler: `docs/WEB_VERSION_PLAN.md` → "Deneme sonucu".
+- Karar: hız/doğruluk yeterli görüldüğü için lite web sürümünün yapımına
+  geçildi.
+
+## Web sürümü — lite sürüm ilk hali (yeni)
+
+- `web/app/` altında, derleme aracı gerektirmeyen bir web uygulaması
+  yazıldı: dosya kuyruğu, sıralı işleme, Metin/SRT düzenleme sekmeleri,
+  TXT/SRT indirme, beş dilli seçim (Mac uygulamasıyla aynı).
+- SRT yardımcıları (`web/app/srt.mjs`) `Tests/SRTDocumentChecks`'teki
+  durumlar port edilerek `web/app/check_srt.mjs` ile doğrulandı.
+- Bu Mac'te uçtan uca denendi: tek dosya, çoklu kuyruk (model yeniden
+  yüklenmeden), ve işlem sırasında iptal + modelin yeniden yüklenip
+  kuyruğun devam etmesi. Konsolda hata görülmedi.
+- Doğrulanmayan konu: kullanıcının kendi Chrome'unda önbellekleme
+  davranışı (fizibilite denemesindeki önbellek sorununun gerçek
+  kullanımda da geçerli olup olmadığı).
+- Ayrıntı: `docs/WEB_VERSION_PLAN.md` → "Lite sürüm — uygulanan".
+
 ## Güncel taban
 
 - Yerel çalışan kaynak sürümü GitHub `main` dalına aktarıldı.

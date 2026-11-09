@@ -14,3 +14,6 @@ Vendor/Tools/*
 
 *.dmg
 *.app
+
+# Üçüncü taraf tasarım referansı (başka bir sitenin stil analizi) — repoya girmemeli.
+web/design-reference/
