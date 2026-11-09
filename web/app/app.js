@@ -17,8 +17,6 @@ const els = {
   fileInput: document.getElementById("file-input"),
   queueList: document.getElementById("queue-list"),
   gpuNotice: document.getElementById("gpu-notice"),
-  updateBanner: document.getElementById("update-banner"),
-  updateBtn: document.getElementById("update-btn"),
 };
 
 let device = "wasm";
@@ -469,21 +467,6 @@ function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   navigator.serviceWorker.register("./sw.js").catch((err) => {
     console.warn("Servis çalışanı kaydedilemedi:", err);
-  });
-
-  // Yeni bir servis çalışanı devreye girdiğinde (site güncellendiğinde)
-  // kullanıcıyı eski, önbellekte takılı kalmış bir sürümde bırakmamak için
-  // yenileme çağrısı göster.
-  let refreshed = false;
-  navigator.serviceWorker.addEventListener("controllerchange", () => {
-    if (refreshed) return;
-    refreshed = true;
-    if (document.hidden) {
-      location.reload();
-    } else {
-      els.updateBanner.hidden = false;
-      els.updateBtn.onclick = () => location.reload();
-    }
   });
 }
 

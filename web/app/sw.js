@@ -5,7 +5,7 @@
 // CACHE_NAME'i her anlamlı dosya değişikliğinde artırın: bu hem eski
 // önbelleği temizletir hem de kurulum sırasında dosyaların taze (tarayıcı
 // HTTP önbelleğinden değil, ağdan) alınmasını garanti eder.
-const CACHE_NAME = "odt-altyazici-app-shell-v3";
+const CACHE_NAME = "odt-altyazici-app-shell-v4";
 const APP_SHELL = [
   "./index.html",
   "./app.js",
@@ -47,7 +47,17 @@ self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET" || url.origin !== self.location.origin) {
     return; // Başka kökenden gelen istekleri (model, CDN) olduğu gibi bırak.
   }
+  // Ağ varsa her zaman taze sürümü al (ve önbelleği güncelle); yalnızca ağ
+  // başarısız olursa (çevrimdışıyken) önbellekten sun. Bu sayede bir deploy
+  // sonrası ilk yenilemede bile eski sürümde takılı kalınmaz — ayrı bir
+  // "yeni sürüm var" bildirimine gerek kalmaz.
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

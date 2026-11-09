@@ -1,11 +1,27 @@
 # Çalışma durumu
 
-## Web sürümü — Hafif/Optimal mod eklendi, kurulum banner'ı kaldırıldı (yeni)
+## Web sürümü — "yeni sürüm var" bildirimi kaldırıldı, ağ-önce önbellekleme (yeni)
+
+- Kullanıcı "Yenile" bildiriminin hiç kaybolmadığını bildirdi. Kök neden:
+  `controllerchange` olayı yalnızca gerçek bir güncellemede değil, bir
+  sayfanın servis çalışanı tarafından ilk kez (ya da yeniden) kontrol
+  altına alındığı her durumda da ateşleniyor — bu yüzden bildirim
+  beklenenden sık, bazen hiç kapanmayacak şekilde tekrar görünüyordu.
+  Ayrıca banner'ın kendisi, bir deploy sonrası tam olarak "ilk yenileme"
+  anında yine de eski içeriği (servis çalışanının cache-first davranışı
+  yüzünden) gösterebiliyordu — yani sorunu tam çözmüyordu.
+- Çözüm: bildirimi tamamen kaldırmak yerine, `sw.js`'in önbellekleme
+  stratejisi "önce önbellek" yerine "önce ağ, yalnızca çevrimdışıyken
+  önbellek" yapıldı. Böylece internet varken her normal sayfa yenileme
+  otomatik olarak en güncel sürümü getiriyor; ayrı bir "yeni sürüm var"
+  uyarısına gerek kalmadı. Çevrimdışı çalışma davranışı aynı kaldı.
+- `CACHE_NAME` v4'e yükseltildi.
+
+## Web sürümü — Hafif/Optimal mod eklendi, kurulum banner'ı kaldırıldı
 
 - Kullanıcı "Uygulama olarak yükle" banner'ından vazgeçti (Chrome zaten
   kendi kurulum simgesini gösteriyor) — banner ve ilgili kod tamamen
-  kaldırıldı. Servis çalışanı/çevrimdışı çalışma ve "yeni sürüm var"
-  bildirimi olduğu gibi kaldı.
+  kaldırıldı.
 - Dil seçiminin altına bir "Mod" seçici eklendi:
   - **Optimal** (varsayılan): `onnx-community/whisper-large-v3-turbo`,
     daha az hata, daha büyük indirme (~1,6 GB).

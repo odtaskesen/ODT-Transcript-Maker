@@ -214,9 +214,14 @@ repoya eklenmedi, `.gitignore`'da) sayfaya uygulandı:
 - Sayfa içi "uygulama olarak yükle" çağrısı (banner + ok) kullanıcı
   isteğiyle kaldırıldı — Chrome zaten adres çubuğunda kendi kurulum
   simgesini gösteriyor, ayrı bir çağrıya gerek görülmedi.
-- "Sayfanın yeni bir sürümü hazır — Yenile" bildirimi kaldı: servis
-  çalışanı güncellenince kullanıcıyı eski, önbellekte takılı kalmış bir
-  sürümde bırakmamak için. Canlı sitede uçtan uca doğrulandı.
+- "Sayfanın yeni bir sürümü hazır — Yenile" bildirimi de kaldırıldı:
+  `controllerchange` olayı yalnızca gerçek güncellemede değil, bir
+  sayfa servis çalışanı tarafından ilk/yeniden kontrol altına alındığı
+  her durumda ateşlendiği için bildirim beklenenden sık/kalıcı
+  görünüyordu. Bunun yerine `sw.js`'in önbellekleme stratejisi "önce
+  ağ, yalnızca çevrimdışıyken önbellek" yapıldı — internet varken her
+  normal yenileme otomatik en güncel sürümü getiriyor, ayrı bir
+  bildirime gerek kalmadı. Çevrimdışı çalışma aynı kaldı.
 
 ## Hafif/Optimal mod — uygulanan
 
