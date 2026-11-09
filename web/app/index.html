@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ODT Altyazıcı — Web</title>
+<link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+<header>
+  <h1>ODT Altyazıcı — Web</h1>
+  <p class="subtitle">
+    Video ve ses dosyalarınızı yazıya çevirir. Her şey bu sayfada,
+    bilgisayarınızda çalışır; dosyalarınız hiçbir sunucuya yüklenmez.
+  </p>
+</header>
+
+<main>
+  <section class="panel">
+    <label for="language-select">Dil</label>
+    <select id="language-select"></select>
+    <p id="model-status" class="model-status"></p>
+    <p id="gpu-notice" class="gpu-notice"></p>
+  </section>
+
+  <section class="panel">
+    <div id="dropzone" class="dropzone">
+      <p>Video veya ses dosyalarını buraya sürükleyin ya da tıklayıp seçin.</p>
+      <p class="hint">Birden fazla dosya seçebilirsiniz; sırayla işlenir.</p>
+    </div>
+    <input id="file-input" type="file" accept="video/*,audio/*" multiple hidden />
+  </section>
+
+  <section class="panel">
+    <h2>Kuyruk</h2>
+    <div id="queue-list" class="queue-list"></div>
+  </section>
+</main>
+
+<footer>
+  <p>Bu sayfa deneysel bir lite sürümdür. Chrome veya Edge önerilir.</p>
+</footer>
+
+<script type="module" src="./app.js"></script>
+</body>
+</html>

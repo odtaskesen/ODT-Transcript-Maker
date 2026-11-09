@@ -1,6 +1,7 @@
 # Web sürümü planı
 
-Durum: Fizibilite denemesi bu Mac'te başarılı. 2. aşamaya (lite sürüm) geçilebilir.
+Durum: Lite sürümün ilk hali yazıldı ve bu Mac'te uçtan uca test edildi
+(`web/app/`). Henüz kullanıcının kendi Chrome'unda denenmedi.
 Tarih: 2026-11-06, güncelleme: 2026-11-09
 
 ## Aşamalar
@@ -122,10 +123,31 @@ doğru metni baştan bildiğimiz 19 saniyelik bir konuşma.
 Önbellekleme konusu, lite sürüm yapılırken veya en geç yayın öncesinde
 kullanıcının kendi tarayıcısında ayrıca doğrulanmalı.
 
+## Lite sürüm — uygulanan (`web/app/`)
+
+- Dosya seçimi (sürükle-bırak veya tıkla), çoklu dosya kuyruğu, sıralı işleme.
+- Model yalnızca ilk dosyada yükleniyor; sıradaki dosyalar için yeniden
+  yüklenmiyor (model çalışır durumda kalıyor).
+- İşlenirken durum metni ve "İptal et" butonu. İptal, o anki işlemi güvenle
+  durdurmak için worker'ı sonlandırıp yeniden başlatıyor; bunun bedeli bir
+  sonraki dosya için modelin yeniden yüklenmesi (bkz. önbellekleme sorunu).
+- Her biten dosya için ayrı **Metin** (serbest düzenlenebilir, TXT'ye iner)
+  ve **SRT** (satır satır düzenlenebilir, zamanlar sabit) sekmesi.
+- SRT ayrıştırma/üretme ve zaman kodu dönüşümleri `web/app/srt.mjs`'de,
+  `Tests/SRTDocumentChecks`'teki durumlar port edilerek `node
+  web/app/check_srt.mjs` ile doğrulanıyor.
+- Dil seçimi Mac uygulamasıyla aynı beş dili kapsıyor (Türkçe, İngilizce,
+  Almanca, Felemenkçe, İspanyolca).
+- Bu Mac'te uçtan uca test edildi: tek dosya, art arda iki dosya (ikincisi
+  model yeniden yüklenmeden işlendi), uzun bir dosyada iptal ve ardından
+  modelin yeniden yüklenip kuyruğun devam etmesi. Hata konsolda görülmedi.
+
 ## Sıradaki adım
 
-Lite sürümün yapımına başlandı (bkz. `web/` klasörü). Kapsam bölümündeki
-özellikler sırayla uygulanacak.
+- Kullanıcının kendi Chrome'unda deneme: gerçek bir video dosyasıyla ve
+  önbellekleme davranışının (sayfa kapatılıp açıldığında model tekrar
+  inip inmediği) doğrulanması.
+- Barındırma/yayın kararı (bkz. Açık sorular).
 
 ## Kaynaklar
 

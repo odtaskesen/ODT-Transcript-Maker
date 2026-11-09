@@ -16,6 +16,21 @@
 - Karar: hız/doğruluk yeterli görüldüğü için lite web sürümünün yapımına
   geçildi.
 
+## Web sürümü — lite sürüm ilk hali (yeni)
+
+- `web/app/` altında, derleme aracı gerektirmeyen bir web uygulaması
+  yazıldı: dosya kuyruğu, sıralı işleme, Metin/SRT düzenleme sekmeleri,
+  TXT/SRT indirme, beş dilli seçim (Mac uygulamasıyla aynı).
+- SRT yardımcıları (`web/app/srt.mjs`) `Tests/SRTDocumentChecks`'teki
+  durumlar port edilerek `web/app/check_srt.mjs` ile doğrulandı.
+- Bu Mac'te uçtan uca denendi: tek dosya, çoklu kuyruk (model yeniden
+  yüklenmeden), ve işlem sırasında iptal + modelin yeniden yüklenip
+  kuyruğun devam etmesi. Konsolda hata görülmedi.
+- Doğrulanmayan konu: kullanıcının kendi Chrome'unda önbellekleme
+  davranışı (fizibilite denemesindeki önbellek sorununun gerçek
+  kullanımda da geçerli olup olmadığı).
+- Ayrıntı: `docs/WEB_VERSION_PLAN.md` → "Lite sürüm — uygulanan".
+
 ## Güncel taban
 
 - Yerel çalışan kaynak sürümü GitHub `main` dalına aktarıldı.
