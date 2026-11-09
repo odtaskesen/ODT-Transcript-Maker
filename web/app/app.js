@@ -19,6 +19,8 @@ const els = {
   installBanner: document.getElementById("install-banner"),
   installBtn: document.getElementById("install-btn"),
   installDismiss: document.getElementById("install-dismiss"),
+  updateBanner: document.getElementById("update-banner"),
+  updateBtn: document.getElementById("update-btn"),
 };
 
 const INSTALL_DISMISSED_KEY = "odt-altyazici-install-dismissed";
@@ -453,6 +455,21 @@ function registerServiceWorker() {
   if (!("serviceWorker" in navigator)) return;
   navigator.serviceWorker.register("./sw.js").catch((err) => {
     console.warn("Servis çalışanı kaydedilemedi:", err);
+  });
+
+  // Yeni bir servis çalışanı devreye girdiğinde (site güncellendiğinde)
+  // kullanıcıyı eski, önbellekte takılı kalmış bir sürümde bırakmamak için
+  // yenileme çağrısı göster.
+  let refreshed = false;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (refreshed) return;
+    refreshed = true;
+    if (document.hidden) {
+      location.reload();
+    } else {
+      els.updateBanner.hidden = false;
+      els.updateBtn.onclick = () => location.reload();
+    }
   });
 }
 

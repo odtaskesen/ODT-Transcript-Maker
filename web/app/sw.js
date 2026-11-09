@@ -1,12 +1,17 @@
 // Yalnızca sayfanın kendi dosyalarını (uygulama kabuğunu) önbelleğe alır;
 // Whisper modeli gibi büyük, başka kökenden gelen dosyalara hiç dokunmaz —
 // onların önbelleklemesi worker.js'teki ChunkedCache'in işi.
-const CACHE_NAME = "odt-altyazici-app-shell-v1";
+//
+// CACHE_NAME'i her anlamlı dosya değişikliğinde artırın: bu hem eski
+// önbelleği temizletir hem de kurulum sırasında dosyaların taze (tarayıcı
+// HTTP önbelleğinden değil, ağdan) alınmasını garanti eder.
+const CACHE_NAME = "odt-altyazici-app-shell-v2";
 const APP_SHELL = [
   "./index.html",
   "./app.js",
   "./worker.js",
   "./srt.mjs",
+  "./chatgpt-prompts.mjs",
   "./styles.css",
   "./manifest.webmanifest",
   "./fonts/DepartureMono-Regular.woff2",
@@ -15,7 +20,16 @@ const APP_SHELL = [
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).then(() => self.skipWaiting())
+    caches
+      .open(CACHE_NAME)
+      .then((cache) =>
+        Promise.all(
+          APP_SHELL.map((url) =>
+            fetch(url, { cache: "reload" }).then((resp) => cache.put(url, resp))
+          )
+        )
+      )
+      .then(() => self.skipWaiting())
   );
 });
 
