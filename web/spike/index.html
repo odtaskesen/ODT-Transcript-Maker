@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8" />
+<title>ODT Altyazıcı — Web denemesi</title>
+<style>
+  body { font-family: -apple-system, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; line-height: 1.5; }
+  button { font-size: 16px; padding: 8px 16px; margin: 8px 8px 8px 0; }
+  #log { white-space: pre-wrap; background: #111; color: #0f0; padding: 12px; font-family: monospace; font-size: 13px; max-height: 300px; overflow-y: auto; }
+  #result, #expected { white-space: pre-wrap; background: #f0f0f0; padding: 12px; border-radius: 6px; }
+  h2 { margin-top: 28px; }
+</style>
+</head>
+<body>
+<h1>ODT Altyazıcı — Tarayıcı denemesi</h1>
+<p>Bu sayfa Mac uygulamasının bir parçası değildir; yalnızca tarayıcıda
+Whisper'ın büyük modelinin çalışıp çalışmadığını test eder.</p>
+
+<h2>1. Tarayıcı kontrolü</h2>
+<div id="gpu-check">Kontrol ediliyor...</div>
+
+<h2>2. Model yükleme</h2>
+<button id="load-btn">Modeli yükle</button>
+<div id="load-status"></div>
+
+<h2>3. Yazıya çevirme</h2>
+<button id="run-btn" disabled>sample.mp4 dosyasını yazıya çevir</button>
+<div id="run-status"></div>
+
+<h2>Beklenen metin (TTS betiği)</h2>
+<div id="expected"></div>
+
+<h2>Çıkan metin</h2>
+<div id="result"></div>
+
+<h2>Günlük</h2>
+<div id="log"></div>
+
+<script type="module">
+const EXPECTED_TEXT = "Merhaba, bu bir deneme kaydıdır. ODT Altyazıcı uygulamasının web sürümü için tarayıcıda çalışan yazıya çevirme denemesi yapıyoruz. Bugün hava oldukça güzel ve içerik üretim süreci hızlı ilerliyor. Bu kısa Türkçe metin, modelin doğruluğunu ölçmek için kullanılacaktır.";
+document.getElementById('expected').textContent = EXPECTED_TEXT;
+
+const logEl = document.getElementById('log');
+function log(msg) {
+  const t = new Date().toLocaleTimeString();
+  logEl.textContent += `[${t}] ${msg}\n`;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+const gpuCheckEl = document.getElementById('gpu-check');
+let device = 'wasm';
+if (!navigator.gpu) {
+  gpuCheckEl.textContent = 'WebGPU bu tarayıcıda yok. (navigator.gpu tanımsız)';
+  log('WebGPU yok, wasm yoluna düşülecek (çok daha yavaş olur).');
+} else {
+  try {
+    const adapter = await navigator.gpu.requestAdapter();
+    if (!adapter) {
+      gpuCheckEl.textContent = 'WebGPU var ama adapter alınamadı.';
+      log('requestAdapter() null döndü.');
+    } else {
+      const features = [...adapter.features];
+      const info = adapter.info || {};
+      gpuCheckEl.textContent = `WebGPU adapter bulundu. shader-f16: ${features.includes('shader-f16')}. ${JSON.stringify(info)}`;
+      log('WebGPU adapter: ' + JSON.stringify({ features, info }));
+      device = 'webgpu';
+    }
+  } catch (err) {
+    gpuCheckEl.textContent = 'WebGPU kontrolünde hata: ' + err;
+    log('WebGPU hata: ' + err);
+  }
+}
+
+const worker = new Worker('./worker.js', { type: 'module' });
+const loadBtn = document.getElementById('load-btn');
+const runBtn = document.getElementById('run-btn');
+const loadStatusEl = document.getElementById('load-status');
+const runStatusEl = document.getElementById('run-status');
+const resultEl = document.getElementById('result');
+
+worker.addEventListener('message', (e) => {
+  const msg = e.data;
+  if (msg.status === 'progress') {
+    if (msg.data && msg.data.file) {
+      loadStatusEl.textContent = `İndiriliyor: ${msg.data.file} ${msg.data.progress ? msg.data.progress.toFixed(1) + '%' : ''}`;
+    }
+  } else if (msg.status === 'loading') {
+    loadStatusEl.textContent = typeof msg.data === 'string' ? msg.data : 'Yükleniyor...';
+    log('loading: ' + JSON.stringify(msg.data));
+  } else if (msg.status === 'ready') {
+    loadStatusEl.textContent = `Model hazır. Yükleme süresi: ${(msg.loadMs / 1000).toFixed(1)} sn`;
+    log(`Model hazır, ${msg.loadMs.toFixed(0)} ms`);
+    runBtn.disabled = false;
+    loadBtn.disabled = true;
+  } else if (msg.status === 'complete') {
+    runStatusEl.textContent = `Bitti. Çıkarım süresi: ${(msg.inferenceMs / 1000).toFixed(1)} sn`;
+    resultEl.textContent = msg.result.text;
+    log(`Tamamlandı, ${msg.inferenceMs.toFixed(0)} ms. Segment sayısı: ${(msg.result.chunks || []).length}`);
+    log('Tam sonuç: ' + JSON.stringify(msg.result));
+    runBtn.disabled = false;
+  } else if (msg.status === 'error') {
+    log('HATA: ' + msg.error);
+    loadStatusEl.textContent = 'Hata oluştu, günlüğe bakın.';
+    runStatusEl.textContent = 'Hata oluştu, günlüğe bakın.';
+    loadBtn.disabled = false;
+    runBtn.disabled = false;
+  }
+});
+
+loadBtn.addEventListener('click', () => {
+  loadBtn.disabled = true;
+  loadStatusEl.textContent = 'Başlatılıyor...';
+  log(`Model yükleme başladı (device: ${device})`);
+  worker.postMessage({ type: 'load', data: { device } });
+});
+
+async function decodeToMono16k(arrayBuffer) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+  const duration = audioBuffer.duration;
+  const offlineCtx = new OfflineAudioContext(1, Math.ceil(duration * 16000), 16000);
+  const source = offlineCtx.createBufferSource();
+  source.buffer = audioBuffer;
+  source.connect(offlineCtx.destination);
+  source.start(0);
+  const rendered = await offlineCtx.startRendering();
+  return { samples: rendered.getChannelData(0), duration };
+}
+
+runBtn.addEventListener('click', async () => {
+  runBtn.disabled = true;
+  runStatusEl.textContent = 'sample.mp4 indiriliyor ve çözümleniyor...';
+  log('sample.mp4 fetch ediliyor');
+  const resp = await fetch('./sample.mp4');
+  const buf = await resp.arrayBuffer();
+  const { samples, duration } = await decodeToMono16k(buf);
+  log(`Ses çözüldü: ${duration.toFixed(1)} sn, ${samples.length} örnek, 16kHz mono`);
+  runStatusEl.textContent = `Çeviriliyor (${duration.toFixed(1)} sn ses)...`;
+  worker.postMessage({ type: 'run', data: { audio: samples, language: 'turkish' } }, [samples.buffer]);
+});
+</script>
+</body>
+</html>

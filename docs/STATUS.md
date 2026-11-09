@@ -1,5 +1,21 @@
 # Çalışma durumu
 
+## Web sürümü — fizibilite denemesi (yeni)
+
+- `feature/web-lite-spike` dalında, ayrı bir `web/spike/` klasöründe tek
+  sayfalık bir test kuruldu. Mac uygulamasına dokunulmadı.
+- Test: `onnx-community/whisper-large-v3-turbo` modeli, tarayıcıda WebGPU
+  üzerinden (Transformers.js, encoder fp16 + decoder q4), macOS'un Türkçe
+  seslendirmesiyle üretilen 19 saniyelik bir test sesiyle çalıştırıldı.
+- Sonuç: WebGPU bu Mac'te sorunsuz çalıştı, bozuk çıktı yok. Çevirme hızı
+  ses süresinin ~4 katı (19 sn ses, 4,8 sn'de çevrildi). Çıkan metin beklenen
+  metinle neredeyse birebir eşleşti (iki küçük TTS kaynaklı fark dışında).
+- Açık konu: model önbellekte kalıcı kalmadı, sayfa yeniden açılınca tekrar
+  indirildi. Kullanıcının kendi Chrome'unda ayrıca doğrulanmalı.
+- Ayrıntı ve tam ölçümler: `docs/WEB_VERSION_PLAN.md` → "Deneme sonucu".
+- Karar: hız/doğruluk yeterli görüldüğü için lite web sürümünün yapımına
+  geçildi.
+
 ## Güncel taban
 
 - Yerel çalışan kaynak sürümü GitHub `main` dalına aktarıldı.
