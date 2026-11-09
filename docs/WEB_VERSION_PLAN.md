@@ -147,9 +147,11 @@ açıldığında model her seferinde yeniden iniyordu. Kök neden bulundu:
 
 Tarayıcıların "Cache Storage" özelliği (sayfaların dosya önbelleklemek için
 kullandığı yerleşik depo), Chrome'da tek bir dosya ~250 MB'ı aştığında
-"Unexpected internal error" hatasıyla yazmayı reddediyor — bu Mac'te ve
-kullanıcının kendi Chrome'unda, 50-900 MB arası dosyalarla ayrı ayrı test
-edilip doğrulandı (200 MB'a kadar sorunsuz, 300 MB ve üstü hep başarısız).
+"Unexpected internal error" hatasıyla yazmayı reddediyor — bu sınır bu
+Mac'te, 50-900 MB arası dosyalarla ayrı ayrı test edilip ölçüldü (200 MB'a
+kadar sorunsuz, 300 MB ve üstü hep başarısız). Kullanıcının kendi
+Chrome'unda doğrulanan, aynı belirtinin (model her açılışta yeniden inme)
+orada da görülmesiydi; tam MB sınırı yalnızca bu Mac'te ölçüldü.
 Whisper'ın `encoder_model_fp16.onnx` (~1,27 GB) ve
 `decoder_model_merged_q4.onnx` (~334 MB) dosyaları bu sınırın üstünde
 olduğu için önbelleğe hiç yazılamıyor, her açılışta yeniden iniyordu. Hata

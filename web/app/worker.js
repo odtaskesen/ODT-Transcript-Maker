@@ -3,11 +3,12 @@ import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transfo
 const MODEL_ID = "onnx-community/whisper-large-v3-turbo";
 
 // Chrome'un Cache Storage'ı tek parçada ~250 MB üstü dosyalarda
-// "Unexpected internal error" ile başarısız oluyor (bu Mac'te ve kullanıcının
-// kendi Chrome'unda ölçüldü). Whisper'ın encoder/decoder dosyaları bundan
-// büyük olduğu için önbelleğe hiç yazılmıyor ve her seferinde yeniden
-// iniyordu. Çözüm: büyük dosyaları küçük parçalara bölüp her parçayı ayrı
-// bir önbellek kaydı olarak saklamak.
+// "Unexpected internal error" ile başarısız oluyor (bu Mac'te ölçüldü;
+// kullanıcının kendi Chrome'unda aynı belirti - model her seferinde yeniden
+// inme - doğrulandı). Whisper'ın encoder/decoder dosyaları bundan büyük
+// olduğu için önbelleğe hiç yazılmıyor ve her seferinde yeniden iniyordu.
+// Çözüm: büyük dosyaları küçük parçalara bölüp her parçayı ayrı bir
+// önbellek kaydı olarak saklamak.
 const CHUNK_BYTES = 128 * 1024 * 1024;
 
 class ChunkedCache {
