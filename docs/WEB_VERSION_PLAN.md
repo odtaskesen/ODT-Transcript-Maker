@@ -1,7 +1,7 @@
 # Web sürümü planı
 
-Durum: Lite sürüm yazıldı, önbellekleme sorunu çözüldü ve düzeltme
-kullanıcının kendi Chrome'unda doğrulandı (70 sn → ~10 sn).
+Durum: Lite sürüm yazıldı, önbellekleme sorunu çözüldü (kullanıcının
+Chrome'unda doğrulandı) ve sayfaya bir tasarım dili uygulandı.
 Tarih: 2026-11-06, güncelleme: 2026-11-09
 
 ## Aşamalar
@@ -170,10 +170,44 @@ yalnızca ~12 saniyede (yeniden indirme olmadan) hazır oldu.
 dosyalar diskten okunuyor, yalnızca ekran kartının "ısınması" sürüyor).
 Düzeltme gerçek kullanımda da çalışıyor.
 
+## Tasarım dili — uygulanan
+
+Kullanıcının verdiği referans (makingsoftware.com'un stil analizi,
+`web/design-reference/` — bu klasör üçüncü taraf materyali olduğu için
+repoya eklenmedi, `.gitignore`'da) sayfaya uygulandı:
+
+- Renkler ve tipografi: Paper #fbfbfb zemin, Ink #000000 metin, Blueprint
+  Blue #103dff tek vurgu rengi, Ash Gray #7d7d7d ikincil bilgiler için.
+  Gövde metni serif (Arizona'nın lisanssız olması nedeniyle belirtilen
+  ikame EB Garamond, Google Fonts), başlık/etiket/buton metni Departure
+  Mono (SIL OFL lisanslı, `web/app/fonts/` altında yerelde barındırılıyor,
+  lisans dosyasıyla birlikte).
+- Bileşenler: noktalı kesik çizgi bölücüler, dipnot stili "dot leader"
+  (dosya adı ... durum), köşeli/az yuvarlak kartlar, iç gölgeli "key
+  button" (buton dolgusu yok, ince çerçeve).
+- Uyarlamalar: orijinal sayfa uzun bir makale; bu bir araç olduğu için
+  256px bölüm boşlukları gibi ölçüler küçültüldü, kırmızı/yeşil durum
+  renkleri eklenmedi (marka dilinde ikinci bir renk yok kuralına uyuldu;
+  hata/iptal durumları Ink/Ash Gray ve düz metinle anlatılıyor).
+- Departure Mono'nun Türkçe karakterleri (İ Ş Ğ Ç Ö Ü ı ş ğ ç ö ü)
+  kapsadığı, piksel karşılaştırmasıyla doğrulandı. Büyük harfe çevirme
+  CSS `text-transform: uppercase` ile yapılıyor (`lang="tr"` sayesinde
+  Chrome "i" harfini doğru şekilde noktalı "İ" yapıyor); JS tarafında
+  `.toUpperCase()` kullanılmadı.
+- Model yükleme ilerlemesi artık Transformers.js'in kendi "progress_total"
+  toplama olayı kullanılarak tek, sıçramayan bir çubukla (█░ karakterleri,
+  Blueprint Blue) gösteriliyor; önceden her dosyada sıfırlanıyordu.
+- Model durumunun diskten mi geldiği, internetten mi indiği artık ayrı
+  ayrı söyleniyor ("Model diskten yüklendi" / "Model indirildi ve
+  hazırlandı") — önceki sürüm ikisini de "indiriliyor" diye gösteriyordu.
+- Bu Mac'te görsel olarak test edildi: boş durum, kuyruğa ekleme, ilerleme
+  çubuğu, tamamlanmış Metin/SRT sekmeleri, hata durumu (bozuk dosya),
+  iptal durumu, 375px mobil genişlik. Hepsi beklendiği gibi çalıştı.
+
 ## Sıradaki adım
 
 Barındırma/yayın kararı (bkz. Açık sorular). Teknik taraf (fizibilite +
-lite sürüm + önbellekleme) tamamlandı.
+lite sürüm + önbellekleme + tasarım) tamamlandı.
 
 ## Kaynaklar
 

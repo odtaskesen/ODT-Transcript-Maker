@@ -1,6 +1,25 @@
 # Çalışma durumu
 
-## Web sürümü — önbellekleme hatası bulundu ve çözüldü (yeni)
+## Web sürümü — tasarım dili uygulandı (yeni)
+
+- Kullanıcının referansı (makingsoftware.com stil analizi) sayfaya
+  uygulandı: Paper/Ink/Blueprint Blue palet, EB Garamond (serif, Arizona
+  ikamesi) + Departure Mono (yerelde barındırılan, SIL OFL), noktalı
+  bölücüler, dot-leader'lar, iç gölgeli "key button". Kırmızı/yeşil durum
+  rengi eklenmedi (tek vurgu rengi kuralına uyuldu).
+- Departure Mono'nun Türkçe karakterleri (İŞĞÇÖÜ) piksel karşılaştırmasıyla
+  doğrulandı; büyük harfe çevirme CSS ile yapılıyor, JS'de
+  `.toUpperCase()` yok.
+- Model indirme ilerlemesi artık tek, sıçramayan bir çubukla gösteriliyor
+  (kütüphanenin "progress_total" toplama olayı kullanılarak); "diskten mi
+  geldi, internetten mi indi" ayrımı da artık kullanıcıya doğru yazılıyor.
+- Bu Mac'te görsel olarak test edildi: boş durum, ilerleme, tamamlanmış
+  sekmeler, hata, iptal, 375px mobil genişlik.
+- `web/design-reference/` (kullanıcının verdiği üçüncü taraf stil
+  dosyaları) `.gitignore`'a eklendi, repoya girmiyor.
+- Ayrıntı: `docs/WEB_VERSION_PLAN.md` → "Tasarım dili — uygulanan".
+
+## Web sürümü — önbellekleme hatası bulundu ve çözüldü
 
 - Kullanıcı kendi Chrome'unda denedi: sayfa yeniden açılınca model yine
   baştan indi, lite sürümdeki açık sorun doğrulandı.

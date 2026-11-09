@@ -11,6 +11,10 @@ const MODEL_ID = "onnx-community/whisper-large-v3-turbo";
 // önbellek kaydı olarak saklamak.
 const CHUNK_BYTES = 128 * 1024 * 1024;
 
+// Model ağırlık dosyaları (.onnx) önbellekten mi geldi, yoksa indirildi mi —
+// kullanıcıya doğru durum metni göstermek için (bkz. load()).
+const cacheState = { usedModelWeightsFromCache: false };
+
 class ChunkedCache {
   #cache;
 
@@ -30,6 +34,7 @@ class ChunkedCache {
       if (!chunkResp) return undefined; // eksik parça varsa yeniden indirilsin
       parts.push(await chunkResp.blob());
     }
+    if (key.endsWith(".onnx")) cacheState.usedModelWeightsFromCache = true;
     return new Response(new Blob(parts), { headers: manifest.headers });
   }
 
@@ -85,14 +90,24 @@ class PipelineSingleton {
 
 async function load({ device }) {
   const t0 = performance.now();
+  // pipeline() dahili olarak progress_callback'imizi bir toplama katmanıyla
+  // sarıyor ve "progress_total" olaylarında tüm dosyalar üzerinden tek bir
+  // yüzde veriyor (per-dosya olaylar yerine bunu kullanıyoruz, çünkü
+  // onlar her dosyada sıfırdan başlayıp ilerleme çubuğunu geri sıçratır).
   const transcriber = await PipelineSingleton.getInstance(device, (x) => {
-    self.postMessage({ status: "progress", data: x });
+    if (x.status === "progress_total") {
+      self.postMessage({ status: "progress", progress: x.progress });
+    }
   });
 
   self.postMessage({ status: "loading", data: "Model ısınıyor..." });
   await transcriber(new Float32Array(16_000), { language: "turkish" });
 
-  self.postMessage({ status: "ready", loadMs: performance.now() - t0 });
+  self.postMessage({
+    status: "ready",
+    loadMs: performance.now() - t0,
+    fromCache: cacheState.usedModelWeightsFromCache,
+  });
 }
 
 async function run({ jobId, audio, language }) {

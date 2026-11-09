@@ -28,8 +28,9 @@ function uid() {
   return nextId++;
 }
 
-function setModelStatus(text) {
+function setModelStatus(text, variant = "muted") {
   els.modelStatus.textContent = text;
+  els.modelStatus.className = `meta-line ${variant}`;
 }
 
 function createWorker() {
@@ -38,18 +39,29 @@ function createWorker() {
   return worker;
 }
 
+function blockBar(percent, width = 20) {
+  const filled = Math.max(0, Math.min(width, Math.round((percent / 100) * width)));
+  return "█".repeat(filled) + "░".repeat(width - filled);
+}
+
 function onWorkerMessage(e) {
   const msg = e.data;
   if (msg.status === "progress") {
-    if (msg.data && msg.data.file) {
-      const pct = msg.data.progress ? ` ${msg.data.progress.toFixed(0)}%` : "";
-      setModelStatus(`Model indiriliyor: ${msg.data.file}${pct}`);
-    }
+    // Bu aşama hem internetten indirmeyi hem diskteki önbellekten okumayı
+    // kapsar (ikisi de aynı şekilde ilerler); hangisi olduğu yalnızca
+    // bitince "ready" mesajındaki fromCache alanıyla netleşiyor.
+    setModelStatus(`Model hazırlanıyor ${blockBar(msg.progress)} ${msg.progress.toFixed(0)}%`, "progress-bar");
   } else if (msg.status === "loading") {
-    setModelStatus(typeof msg.data === "string" ? msg.data : "Model hazırlanıyor...");
+    setModelStatus(typeof msg.data === "string" ? msg.data : "Model hazırlanıyor...", "muted");
   } else if (msg.status === "ready") {
     modelState = "ready";
-    setModelStatus(`Model hazır (${(msg.loadMs / 1000).toFixed(0)} sn).`);
+    const seconds = (msg.loadMs / 1000).toFixed(0);
+    setModelStatus(
+      msg.fromCache
+        ? `Model diskten yüklendi (${seconds} sn, yeniden indirilmedi).`
+        : `Model indirildi ve hazırlandı (${seconds} sn).`,
+      "muted"
+    );
     processQueue();
   } else if (msg.status === "complete") {
     onJobComplete(msg.jobId, msg.result, msg.inferenceMs);
@@ -235,6 +247,7 @@ function render() {
     header.className = "queue-item-header";
     header.innerHTML = `
       <span class="queue-item-name">${escapeHtml(item.file.name)}</span>
+      <span class="dot-leader"></span>
       <span class="queue-item-status">${statusLabel(item)}</span>
     `;
     card.appendChild(header);
@@ -242,10 +255,12 @@ function render() {
     if (item.status === "processing") {
       const p = document.createElement("div");
       p.className = "queue-item-progress";
-      p.textContent = item.progressText || "";
+      const span = document.createElement("span");
+      span.textContent = item.progressText || "";
+      p.appendChild(span);
       const cancelBtn = document.createElement("button");
       cancelBtn.textContent = "İptal et";
-      cancelBtn.className = "btn-secondary";
+      cancelBtn.className = "key-button";
       cancelBtn.onclick = () => cancelItem(item.id);
       p.appendChild(cancelBtn);
       card.appendChild(p);
@@ -271,22 +286,26 @@ function renderResult(item) {
   wrap.className = "queue-item-result";
 
   const tabs = document.createElement("div");
-  tabs.className = "tabs";
+  tabs.className = "toggle-row";
   const metinTab = document.createElement("button");
   metinTab.textContent = "Metin";
-  metinTab.className = item.activeTab === "metin" ? "tab active" : "tab";
+  metinTab.className = item.activeTab === "metin" ? "toggle-option active" : "toggle-option";
   metinTab.onclick = () => {
     item.activeTab = "metin";
     render();
   };
+  const dot = document.createElement("span");
+  dot.className = "toggle-dot";
+  dot.textContent = "·";
   const srtTab = document.createElement("button");
   srtTab.textContent = "SRT";
-  srtTab.className = item.activeTab === "srt" ? "tab active" : "tab";
+  srtTab.className = item.activeTab === "srt" ? "toggle-option active" : "toggle-option";
   srtTab.onclick = () => {
     item.activeTab = "srt";
     render();
   };
   tabs.appendChild(metinTab);
+  tabs.appendChild(dot);
   tabs.appendChild(srtTab);
   wrap.appendChild(tabs);
 
@@ -313,6 +332,7 @@ function renderResult(item) {
 
     const dlBtn = document.createElement("button");
     dlBtn.textContent = "SRT indir";
+    dlBtn.className = "key-button";
     dlBtn.onclick = () => downloadText(`${baseName(item.file.name)}.srt`, serializeSRT(item.segments));
     wrap.appendChild(dlBtn);
   } else {
@@ -327,6 +347,7 @@ function renderResult(item) {
 
     const dlBtn = document.createElement("button");
     dlBtn.textContent = "TXT indir";
+    dlBtn.className = "key-button";
     dlBtn.onclick = () => downloadText(`${baseName(item.file.name)}.txt`, item.editedText);
     wrap.appendChild(dlBtn);
   }
