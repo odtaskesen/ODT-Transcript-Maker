@@ -43,6 +43,39 @@ body {
 
 select, button, input, textarea { font: inherit; color: inherit; }
 
+/* ---------- Kurulum çağrısı ---------- */
+
+.install-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid var(--color-hairline);
+  border-radius: 4px;
+  padding: 12px 14px;
+  margin: 24px 0 0;
+  background: var(--color-paper);
+}
+
+.install-arrow { width: 28px; height: 36px; flex-shrink: 0; }
+
+.install-text {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--color-ink);
+  margin: 0;
+  flex: 1;
+}
+
+.install-dismiss {
+  background: none;
+  border: none;
+  color: var(--color-ash-gray);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 4px;
+}
+
 /* ---------- Masthead ---------- */
 
 .masthead {
@@ -304,6 +337,12 @@ select, button, input, textarea { font: inherit; color: inherit; }
   margin-bottom: 4px;
 }
 
+/* ---------- ChatGPT araçları ---------- */
+
+.chatgpt-tools { margin-top: 16px; border-top: 1px dashed var(--color-hairline); padding-top: 12px; }
+
+.chatgpt-tools-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+
 /* ---------- Footer ---------- */
 
 .typewriter-footer {
@@ -326,4 +365,5 @@ select, button, input, textarea { font: inherit; color: inherit; }
   .lede { text-align: left; max-width: none; }
   .row-header { flex-wrap: wrap; }
   .row-header select { margin-left: 0; }
+  .install-banner { flex-wrap: wrap; }
 }

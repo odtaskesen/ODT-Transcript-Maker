@@ -1,4 +1,5 @@
 import { parseSRT, serializeSRT, segmentsFromChunks } from "./srt.mjs";
+import { CHATGPT_ACTIONS, buildPrompt } from "./chatgpt-prompts.mjs";
 
 const LANGUAGES = [
   { code: "turkish", title: "Türkçe" },
@@ -15,7 +16,12 @@ const els = {
   fileInput: document.getElementById("file-input"),
   queueList: document.getElementById("queue-list"),
   gpuNotice: document.getElementById("gpu-notice"),
+  installBanner: document.getElementById("install-banner"),
+  installBtn: document.getElementById("install-btn"),
+  installDismiss: document.getElementById("install-dismiss"),
 };
+
+const INSTALL_DISMISSED_KEY = "odt-altyazici-install-dismissed";
 
 let device = "wasm";
 let worker = null;
@@ -23,6 +29,7 @@ let modelState = "unloaded"; // unloaded | loading | ready
 let queue = []; // { id, file, status, resultText, chunks, editedText, segments, startedAt }
 let nextId = 1;
 let processing = false;
+let deferredInstallPrompt = null;
 
 function uid() {
   return nextId++;
@@ -350,9 +357,58 @@ function renderResult(item) {
     dlBtn.className = "key-button";
     dlBtn.onclick = () => downloadText(`${baseName(item.file.name)}.txt`, item.editedText);
     wrap.appendChild(dlBtn);
+
+    wrap.appendChild(renderChatGPTTools(item));
   }
 
   return wrap;
+}
+
+function renderChatGPTTools(item) {
+  const wrap = document.createElement("div");
+  wrap.className = "chatgpt-tools";
+
+  const label = document.createElement("div");
+  label.className = "meta-line muted";
+  label.textContent = "ChatGPT araçları";
+  wrap.appendChild(label);
+
+  const row = document.createElement("div");
+  row.className = "chatgpt-tools-row";
+  for (const action of CHATGPT_ACTIONS) {
+    const btn = document.createElement("button");
+    btn.textContent = action.title;
+    btn.className = "key-button";
+    btn.onclick = () => sendToChatGPT(item, action);
+    row.appendChild(btn);
+  }
+  wrap.appendChild(row);
+
+  if (item.chatgptMessage) {
+    const msg = document.createElement("div");
+    msg.className = "meta-line muted";
+    msg.textContent = item.chatgptMessage;
+    wrap.appendChild(msg);
+  }
+
+  return wrap;
+}
+
+async function sendToChatGPT(item, action) {
+  const prompt = buildPrompt(action, item.editedText);
+  try {
+    await navigator.clipboard.writeText(prompt);
+    item.chatgptMessage = action.copiedMessage;
+  } catch {
+    item.chatgptMessage = "Panoya kopyalanamadı. Metni elle kopyalayabilirsiniz.";
+  }
+  window.open("https://chatgpt.com/", "_blank", "noopener");
+  render();
+  clearTimeout(item._chatgptMessageTimer);
+  item._chatgptMessageTimer = setTimeout(() => {
+    item.chatgptMessage = null;
+    render();
+  }, 4000);
 }
 
 function escapeHtml(s) {
@@ -389,6 +445,57 @@ function init() {
 
   checkWebGPU();
   setModelStatus("Henüz yüklenmedi. İlk dosya eklendiğinde otomatik hazırlanır.");
+  registerServiceWorker();
+  initInstallBanner();
+}
+
+function registerServiceWorker() {
+  if (!("serviceWorker" in navigator)) return;
+  navigator.serviceWorker.register("./sw.js").catch((err) => {
+    console.warn("Servis çalışanı kaydedilemedi:", err);
+  });
+}
+
+function isDismissed() {
+  try {
+    return localStorage.getItem(INSTALL_DISMISSED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function initInstallBanner() {
+  const alreadyInstalled =
+    window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  if (alreadyInstalled) return;
+
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    if (!isDismissed()) els.installBanner.hidden = false;
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    els.installBanner.hidden = true;
+  });
+
+  els.installBtn.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    els.installBanner.hidden = true;
+  });
+
+  els.installDismiss.addEventListener("click", () => {
+    els.installBanner.hidden = true;
+    try {
+      localStorage.setItem(INSTALL_DISMISSED_KEY, "1");
+    } catch {
+      // Gizli sekme gibi depolamanın kapalı olduğu durumlarda sessizce geç.
+    }
+  });
 }
 
 async function checkWebGPU() {

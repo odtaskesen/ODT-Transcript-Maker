@@ -4,6 +4,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>ODT Altyazıcı — Web</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+<meta name="theme-color" content="#103dff" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
@@ -13,6 +16,18 @@
 <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
+<div id="install-banner" class="install-banner" hidden>
+  <p class="install-text">
+    Bu siteyi bilgisayarınıza uygulama gibi kurabilirsiniz — internetsizken de açılır.
+  </p>
+  <button id="install-btn" class="key-button">Uygulama olarak yükle</button>
+  <svg class="install-arrow" viewBox="0 0 80 100" aria-hidden="true">
+    <path d="M10 95 C 8 60, 30 30, 60 8" fill="none" stroke="#103dff" stroke-width="3" />
+    <path d="M60 8 L 48 12 M60 8 L 56 20" fill="none" stroke="#103dff" stroke-width="3" stroke-linecap="round" />
+  </svg>
+  <button id="install-dismiss" class="install-dismiss" aria-label="Kapat">×</button>
+</div>
+
 <header class="masthead">
   <div class="wordmark">ODT ALTYAZICI</div>
   <div class="lede">
