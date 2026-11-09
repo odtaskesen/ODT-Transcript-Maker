@@ -1,7 +1,7 @@
 # Web sürümü planı
 
-Durum: Lite sürüm yazıldı ve önbellekleme sorunu çözüldü. Kullanıcının
-kendi Chrome'unda bir kez daha denenmesi bekleniyor.
+Durum: Lite sürüm yazıldı, önbellekleme sorunu çözüldü ve düzeltme
+kullanıcının kendi Chrome'unda doğrulandı (70 sn → ~10 sn).
 Tarih: 2026-11-06, güncelleme: 2026-11-09
 
 ## Aşamalar
@@ -163,11 +163,15 @@ Bu Mac'te doğrulandı: önbellek temizlenip sıfırdan denendiğinde model
 ~73 saniyede indi (parçalama ek yükü dahil), sayfa yeniden açıldığında ise
 yalnızca ~12 saniyede (yeniden indirme olmadan) hazır oldu.
 
+**Kullanıcının kendi Chrome'unda doğrulama:** İlk yükleme ~70 saniye
+(indirme), sayfa yenilendiğinde ~9-10 saniye (yeniden indirme yok —
+dosyalar diskten okunuyor, yalnızca ekran kartının "ısınması" sürüyor).
+Düzeltme gerçek kullanımda da çalışıyor.
+
 ## Sıradaki adım
 
-- Kullanıcının kendi Chrome'unda bu düzeltmeyi bir kez daha denemesi:
-  sayfa yeniden açıldığında modelin artık hızlı gelip gelmediği.
-- Barındırma/yayın kararı (bkz. Açık sorular).
+Barındırma/yayın kararı (bkz. Açık sorular). Teknik taraf (fizibilite +
+lite sürüm + önbellekleme) tamamlandı.
 
 ## Kaynaklar
 

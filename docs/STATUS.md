@@ -10,13 +10,15 @@
   büyük `encoder`/`decoder` dosyaları bu sınırın üstünde.
 - Çözüm: `web/app/worker.js`'e büyük dosyaları ~128 MB'lık parçalara
   bölüp ayrı ayrı önbellekleyen bir yardımcı (`ChunkedCache`) eklendi.
-- Doğrulama: önbellek temizlenip yeniden denendiğinde ilk yükleme ~73 sn
-  (parçalama ek yüküyle), sayfa yeniden açıldığında ise ~12 sn'de (yeniden
-  indirme olmadan) hazır oldu.
+- Doğrulama (bu Mac'te): önbellek temizlenip yeniden denendiğinde ilk
+  yükleme ~73 sn (parçalama ek yüküyle), sayfa yeniden açıldığında ise
+  ~12 sn'de (yeniden indirme olmadan) hazır oldu.
+- Doğrulama (kullanıcının kendi Chrome'unda): ilk yükleme ~70 sn, sayfa
+  yenilendiğinde ~9-10 sn — düzeltme gerçek kullanımda da çalışıyor.
 - Ayrıntı: `docs/WEB_VERSION_PLAN.md` → "Önbellekleme sorunu — bulundu ve
   çözüldü".
-- Sıradaki adım: kullanıcının kendi Chrome'unda bu düzeltmeyi bir kez daha
-  denemesi.
+- Kapanış durumu: teknik fizibilite tamamlandı. Kalan konu yalnızca
+  barındırma/yayın kararı.
 
 ## Web sürümü — fizibilite denemesi (yeni)
 
