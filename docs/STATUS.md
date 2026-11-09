@@ -1,6 +1,28 @@
 # Çalışma durumu
 
-## Web sürümü — "eski sürümde takılı kalma" hatası bulundu ve çözüldü (yeni)
+## Web sürümü — Hafif/Optimal mod eklendi, kurulum banner'ı kaldırıldı (yeni)
+
+- Kullanıcı "Uygulama olarak yükle" banner'ından vazgeçti (Chrome zaten
+  kendi kurulum simgesini gösteriyor) — banner ve ilgili kod tamamen
+  kaldırıldı. Servis çalışanı/çevrimdışı çalışma ve "yeni sürüm var"
+  bildirimi olduğu gibi kaldı.
+- Dil seçiminin altına bir "Mod" seçici eklendi:
+  - **Optimal** (varsayılan): `onnx-community/whisper-large-v3-turbo`,
+    daha az hata, daha büyük indirme (~1,6 GB).
+  - **Hafif**: `onnx-community/whisper-small`, daha hızlı ve küçük
+    (~400 MB), ama belirgin ölçüde daha çok hata — OpenAI'ın yayınladığı
+    Common Voice 9 Türkçe ölçümünde small %23,7 hataya karşı large-v2
+    %14,5 (bkz. `docs/WEB_VERSION_PLAN.md`). tiny/base denenmedi; aynı
+    tabloya göre Türkçe'de kullanılamayacak kadar kötü (%38-54 hata).
+- Mod değiştirildiğinde (işlem sürmüyorsa) worker sonlandırılıp bir
+  sonraki dosyada doğru model yükleniyor.
+- Bu Mac'te uçtan uca test edildi: Hafif modda `whisper-small` indi
+  (~20 sn, Optimal'in ~70-100 sn'sine karşı), Optimal'e dönünce doğru
+  şekilde `whisper-large-v3-turbo`'yu yeniden indirmeye başladı. Hafif
+  modun çıktısında beklendiği gibi gözle görülür daha fazla hata vardı
+  (örn. "ODT Altyazıcı" → "O DTA 6 yazıcı").
+
+## Web sürümü — "eski sürümde takılı kalma" hatası bulundu ve çözüldü
 
 - Yayına alınan sitede (odtaltyazici.vercel.app) kullanıcı, kurulum
   banner'ındaki kapatma (×) butonunun çalışmadığını bildirdi.

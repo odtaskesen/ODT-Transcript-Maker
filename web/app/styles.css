@@ -43,9 +43,9 @@ body {
 
 select, button, input, textarea { font: inherit; color: inherit; }
 
-/* ---------- Kurulum çağrısı ---------- */
+/* ---------- Bildirim şeridi (sürüm güncellemesi vb.) ---------- */
 
-.install-banner {
+.notice-banner {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -56,24 +56,12 @@ select, button, input, textarea { font: inherit; color: inherit; }
   background: var(--color-paper);
 }
 
-.install-arrow { width: 28px; height: 36px; flex-shrink: 0; }
-
-.install-text {
+.notice-text {
   font-size: 13px;
   line-height: 1.4;
   color: var(--color-ink);
   margin: 0;
   flex: 1;
-}
-
-.install-dismiss {
-  background: none;
-  border: none;
-  color: var(--color-ash-gray);
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  padding: 4px;
 }
 
 /* ---------- Masthead ---------- */
@@ -365,5 +353,5 @@ select, button, input, textarea { font: inherit; color: inherit; }
   .lede { text-align: left; max-width: none; }
   .row-header { flex-wrap: wrap; }
   .row-header select { margin-left: 0; }
-  .install-banner { flex-wrap: wrap; }
+  .notice-banner { flex-wrap: wrap; }
 }

@@ -1,7 +1,8 @@
 # Web sürümü planı
 
 Durum: Lite sürüm yazıldı, önbellekleme sorunu çözüldü (kullanıcının
-Chrome'unda doğrulandı) ve sayfaya bir tasarım dili uygulandı.
+Chrome'unda doğrulandı), sayfaya bir tasarım dili uygulandı, çevrimdışı
+çalışma (PWA) ve Hafif/Optimal model modu eklendi.
 Tarih: 2026-11-06, güncelleme: 2026-11-09
 
 ## Aşamalar
@@ -204,10 +205,53 @@ repoya eklenmedi, `.gitignore`'da) sayfaya uygulandı:
   çubuğu, tamamlanmış Metin/SRT sekmeleri, hata durumu (bozuk dosya),
   iptal durumu, 375px mobil genişlik. Hepsi beklendiği gibi çalıştı.
 
+## Çevrimdışı çalışma (PWA) — uygulanan
+
+- `web/app/manifest.webmanifest` + `web/app/sw.js`: sayfa "uygulama
+  olarak yükle" ile kurulabiliyor, servis çalışanı uygulama kabuğunu
+  (model hariç) önbelleğe alıyor. Kullanıcının kendi Chrome'unda
+  doğrulandı: wifi kapalıyken de sayfa açıldı.
+- Sayfa içi "uygulama olarak yükle" çağrısı (banner + ok) kullanıcı
+  isteğiyle kaldırıldı — Chrome zaten adres çubuğunda kendi kurulum
+  simgesini gösteriyor, ayrı bir çağrıya gerek görülmedi.
+- "Sayfanın yeni bir sürümü hazır — Yenile" bildirimi kaldı: servis
+  çalışanı güncellenince kullanıcıyı eski, önbellekte takılı kalmış bir
+  sürümde bırakmamak için. Canlı sitede uçtan uca doğrulandı.
+
+## Hafif/Optimal mod — uygulanan
+
+Zayıf bilgisayarlarda büyük modelin yavaş kalabileceği düşünülerek,
+"Dil" seçiminin altına bir model modu eklendi:
+
+- **Optimal** (varsayılan): `onnx-community/whisper-large-v3-turbo`,
+  ~1,6 GB.
+- **Hafif**: `onnx-community/whisper-small`, ~400 MB.
+
+Karar, OpenAI'ın Whisper makalesindeki Common Voice 9 Türkçe hata
+oranlarına dayanıyor (Tablo 11, düşük = iyi):
+
+| Model | Hata oranı |
+|---|---|
+| tiny | %53,6 |
+| base | %38,6 |
+| small | %23,7 |
+| medium | %17,7 |
+| large | %16,6 |
+| large-v2 | %14,5 |
+
+tiny ve base, Türkçe için kullanılamayacak kadar kötü çıktığından
+listeye alınmadı; `small`, boyut/hız kazancı karşılığında "kullanılabilir
+ama belirgin ölçüde daha hatalı" tek makul seçenek.
+
+Bu Mac'te uçtan uca test edildi: Hafif modda `whisper-small` indi
+(~20 sn), Optimal'e dönünce `whisper-large-v3-turbo` doğru şekilde
+yeniden indirilmeye başladı. Hafif modun çıktısında beklenen fazladan
+hatalar gözlemlendi (örn. "ODT Altyazıcı" → "O DTA 6 yazıcı").
+
 ## Sıradaki adım
 
 Barındırma/yayın kararı (bkz. Açık sorular). Teknik taraf (fizibilite +
-lite sürüm + önbellekleme + tasarım) tamamlandı.
+lite sürüm + önbellekleme + tasarım + PWA + mod seçimi) tamamlandı.
 
 ## Kaynaklar
 

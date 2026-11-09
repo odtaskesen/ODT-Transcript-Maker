@@ -1,6 +1,12 @@
 import { pipeline, env } from "https://cdn.jsdelivr.net/npm/@huggingface/transformers@4.3.2/dist/transformers.min.js";
 
-const MODEL_ID = "onnx-community/whisper-large-v3-turbo";
+// Optimal: large-v3-turbo — daha az hata, daha büyük indirme, daha yavaş.
+// Hafif: small — daha hızlı ve küçük, ama özellikle Türkçe gibi dillerde
+// belirgin ölçüde daha çok hata yapar (bkz. docs/WEB_VERSION_PLAN.md).
+const MODEL_CONFIGS = {
+  optimal: { modelId: "onnx-community/whisper-large-v3-turbo" },
+  lite: { modelId: "onnx-community/whisper-small" },
+};
 
 // Chrome'un Cache Storage'ı tek parçada ~250 MB üstü dosyalarda
 // "Unexpected internal error" ile başarısız oluyor (bu Mac'te ölçüldü;
@@ -74,12 +80,11 @@ const DEVICE_CONFIG = {
 
 class PipelineSingleton {
   static instance = null;
-  static device = null;
 
-  static async getInstance(device, progress_callback) {
+  static async getInstance(device, mode, progress_callback) {
     if (!this.instance) {
-      this.device = device;
-      this.instance = pipeline("automatic-speech-recognition", MODEL_ID, {
+      const { modelId } = MODEL_CONFIGS[mode];
+      this.instance = pipeline("automatic-speech-recognition", modelId, {
         ...DEVICE_CONFIG[device],
         progress_callback,
       });
@@ -88,13 +93,13 @@ class PipelineSingleton {
   }
 }
 
-async function load({ device }) {
+async function load({ device, mode }) {
   const t0 = performance.now();
   // pipeline() dahili olarak progress_callback'imizi bir toplama katmanıyla
   // sarıyor ve "progress_total" olaylarında tüm dosyalar üzerinden tek bir
   // yüzde veriyor (per-dosya olaylar yerine bunu kullanıyoruz, çünkü
   // onlar her dosyada sıfırdan başlayıp ilerleme çubuğunu geri sıçratır).
-  const transcriber = await PipelineSingleton.getInstance(device, (x) => {
+  const transcriber = await PipelineSingleton.getInstance(device, mode, (x) => {
     if (x.status === "progress_total") {
       self.postMessage({ status: "progress", progress: x.progress });
     }

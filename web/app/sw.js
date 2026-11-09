@@ -5,7 +5,7 @@
 // CACHE_NAME'i her anlamlı dosya değişikliğinde artırın: bu hem eski
 // önbelleği temizletir hem de kurulum sırasında dosyaların taze (tarayıcı
 // HTTP önbelleğinden değil, ağdan) alınmasını garanti eder.
-const CACHE_NAME = "odt-altyazici-app-shell-v2";
+const CACHE_NAME = "odt-altyazici-app-shell-v3";
 const APP_SHELL = [
   "./index.html",
   "./app.js",

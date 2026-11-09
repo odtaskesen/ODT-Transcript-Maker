@@ -11,27 +11,23 @@ const LANGUAGES = [
 
 const els = {
   languageSelect: document.getElementById("language-select"),
+  modeSelect: document.getElementById("mode-select"),
   modelStatus: document.getElementById("model-status"),
   dropzone: document.getElementById("dropzone"),
   fileInput: document.getElementById("file-input"),
   queueList: document.getElementById("queue-list"),
   gpuNotice: document.getElementById("gpu-notice"),
-  installBanner: document.getElementById("install-banner"),
-  installBtn: document.getElementById("install-btn"),
-  installDismiss: document.getElementById("install-dismiss"),
   updateBanner: document.getElementById("update-banner"),
   updateBtn: document.getElementById("update-btn"),
 };
 
-const INSTALL_DISMISSED_KEY = "odt-altyazici-install-dismissed";
-
 let device = "wasm";
 let worker = null;
 let modelState = "unloaded"; // unloaded | loading | ready
+let modelMode = "optimal"; // optimal | lite — worker şu an hangi model için yüklü/yükleniyor
 let queue = []; // { id, file, status, resultText, chunks, editedText, segments, startedAt }
 let nextId = 1;
 let processing = false;
-let deferredInstallPrompt = null;
 
 function uid() {
   return nextId++;
@@ -65,10 +61,11 @@ function onWorkerMessage(e) {
   } else if (msg.status === "ready") {
     modelState = "ready";
     const seconds = (msg.loadMs / 1000).toFixed(0);
+    const modeLabel = modelMode === "lite" ? "Hafif mod" : "Optimal mod";
     setModelStatus(
       msg.fromCache
-        ? `Model diskten yüklendi (${seconds} sn, yeniden indirilmedi).`
-        : `Model indirildi ve hazırlandı (${seconds} sn).`,
+        ? `${modeLabel} diskten yüklendi (${seconds} sn, yeniden indirilmedi).`
+        : `${modeLabel} indirildi ve hazırlandı (${seconds} sn).`,
       "muted"
     );
     processQueue();
@@ -85,7 +82,22 @@ async function ensureModel() {
   modelState = "loading";
   if (!worker) createWorker();
   setModelStatus("Model hazırlanıyor (ilk seferde biraz sürebilir)...");
-  worker.postMessage({ type: "load", data: { device } });
+  worker.postMessage({ type: "load", data: { device, mode: modelMode } });
+}
+
+function setMode(mode) {
+  if (mode === modelMode) return;
+  if (processing) return; // Aktif işlem sırasında mod değişimine izin verme.
+  modelMode = mode;
+  // Şu an yüklü/yüklenmekte olan model başka moda ait; worker'ı sonlandırıp
+  // bir sonraki dosyada doğru modelin yüklenmesini sağla.
+  if (worker) {
+    worker.removeEventListener("message", onWorkerMessage);
+    worker.terminate();
+    worker = null;
+  }
+  modelState = "unloaded";
+  setModelStatus("Henüz yüklenmedi. İlk dosya eklendiğinde otomatik hazırlanır.");
 }
 
 function findItem(id) {
@@ -428,6 +440,9 @@ function init() {
   }
   els.languageSelect.value = "turkish";
 
+  els.modeSelect.value = modelMode;
+  els.modeSelect.addEventListener("change", (e) => setMode(e.target.value));
+
   els.fileInput.addEventListener("change", (e) => {
     addFiles(e.target.files);
     e.target.value = "";
@@ -448,7 +463,6 @@ function init() {
   checkWebGPU();
   setModelStatus("Henüz yüklenmedi. İlk dosya eklendiğinde otomatik hazırlanır.");
   registerServiceWorker();
-  initInstallBanner();
 }
 
 function registerServiceWorker() {
@@ -469,48 +483,6 @@ function registerServiceWorker() {
     } else {
       els.updateBanner.hidden = false;
       els.updateBtn.onclick = () => location.reload();
-    }
-  });
-}
-
-function isDismissed() {
-  try {
-    return localStorage.getItem(INSTALL_DISMISSED_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-function initInstallBanner() {
-  const alreadyInstalled =
-    window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
-  if (alreadyInstalled) return;
-
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredInstallPrompt = e;
-    if (!isDismissed()) els.installBanner.hidden = false;
-  });
-
-  window.addEventListener("appinstalled", () => {
-    deferredInstallPrompt = null;
-    els.installBanner.hidden = true;
-  });
-
-  els.installBtn.addEventListener("click", async () => {
-    if (!deferredInstallPrompt) return;
-    deferredInstallPrompt.prompt();
-    await deferredInstallPrompt.userChoice;
-    deferredInstallPrompt = null;
-    els.installBanner.hidden = true;
-  });
-
-  els.installDismiss.addEventListener("click", () => {
-    els.installBanner.hidden = true;
-    try {
-      localStorage.setItem(INSTALL_DISMISSED_KEY, "1");
-    } catch {
-      // Gizli sekme gibi depolamanın kapalı olduğu durumlarda sessizce geç.
     }
   });
 }
