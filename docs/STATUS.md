@@ -1,6 +1,20 @@
 # Çalışma durumu
 
-## Web sürümü — `main`'e merge edildi, Vercel'e hazır (yeni)
+## Web sürümü — çevrimdışı (PWA) + ChatGPT araçları eklendi (yeni)
+
+- Sayfa artık uygulama olarak kurulabiliyor (manifest + servis
+  çalışanı); kurulduktan sonra internetsiz de açılıyor. Kullanıcının
+  kendi Chrome'unda doğrulandı: servis çalışanı "activated and
+  running", wifi kapalıyken de sayfa açıldı.
+- Sayfada, tarayıcı kurulabilir dediğinde beliren, kapatılabilir bir
+  "Uygulama olarak yükle" çağrısı var (ok işaretiyle tarayıcının kendi
+  simgesine gönderme yapıyor).
+- Mac uygulamasındaki dört ChatGPT istemi (Yazım Kontrolü, Özet Çıkar,
+  Başlık Fikirleri, Açıklama Yazdır) web sürümüne de eklendi; kullanıcı
+  test etti, çalışıyor.
+- `main`'e commit'lendi ve push edildi.
+
+## Web sürümü — `main`'e merge edildi, Vercel'e hazır
 
 - `feature/web-lite-spike` dalındaki tüm iş (fizibilite denemesi, lite
   sürüm, önbellekleme düzeltmesi, tasarım dili) PR #1 ile `main`'e
