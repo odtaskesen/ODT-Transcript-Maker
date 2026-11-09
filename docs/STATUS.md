@@ -1,6 +1,24 @@
 # Çalışma durumu
 
-## Web sürümü — çevrimdışı (PWA) + ChatGPT araçları eklendi (yeni)
+## Web sürümü — "eski sürümde takılı kalma" hatası bulundu ve çözüldü (yeni)
+
+- Yayına alınan sitede (odtaltyazici.vercel.app) kullanıcı, kurulum
+  banner'ındaki kapatma (×) butonunun çalışmadığını bildirdi.
+- Kök neden: servis çalışanının eski sürümü, yeni bir deploy sonrasında
+  da sekme kapatılıp açılana kadar sayfayı kontrol etmeye devam ediyor
+  (servis çalışanlarının normal yaşam döngüsü) — kullanıcı farkında
+  olmadan eski, düzeltilmemiş `app.js`'i görüyordu. Temiz bir oturumda
+  (önbellek/servis çalışanı sıfırlanmış) buton sorunsuz çalıştığı
+  doğrulanarak teyit edildi.
+- Çözüm: `sw.js`'e sürümlü önbellek adı ve kurulum sırasında dosyaları
+  tarayıcı HTTP önbelleğini atlayıp ağdan taze alma eklendi; `app.js`'e
+  yeni bir servis çalışanı devreye girdiğinde kullanıcıya "Sayfanın yeni
+  bir sürümü hazır — Yenile" çağrısı gösteren bir bildirim eklendi.
+- Canlı sitede uçtan uca doğrulandı: eski sürümü kontrol eden bir sekme
+  yenilenince yeni sürüme (v2 önbellek) geçti, kapatma butonu çalıştı.
+- Ayrıca `chatgpt-prompts.mjs` önbellek listesine eklendi (unutulmuştu).
+
+## Web sürümü — çevrimdışı (PWA) + ChatGPT araçları eklendi
 
 - Sayfa artık uygulama olarak kurulabiliyor (manifest + servis
   çalışanı); kurulduktan sonra internetsiz de açılıyor. Kullanıcının
