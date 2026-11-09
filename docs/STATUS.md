@@ -1,6 +1,15 @@
 # Çalışma durumu
 
-## Web sürümü — tasarım dili uygulandı (yeni)
+## Web sürümü — `main`'e merge edildi, Vercel'e hazır (yeni)
+
+- `feature/web-lite-spike` dalındaki tüm iş (fizibilite denemesi, lite
+  sürüm, önbellekleme düzeltmesi, tasarım dili) PR #1 ile `main`'e
+  merge edildi.
+- Vercel bağlanırken Root Directory **`web/app`** olarak ayarlanmalı
+  (yalnızca o klasör yayına hazır; `web/spike` atılabilir bir denemedir,
+  `web/design-reference` zaten repoda yok).
+
+## Web sürümü — tasarım dili uygulandı
 
 - Kullanıcının referansı (makingsoftware.com stil analizi) sayfaya
   uygulandı: Paper/Ink/Blueprint Blue palet, EB Garamond (serif, Arizona
