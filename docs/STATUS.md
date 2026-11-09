@@ -1,5 +1,23 @@
 # Çalışma durumu
 
+## Web sürümü — önbellekleme hatası bulundu ve çözüldü (yeni)
+
+- Kullanıcı kendi Chrome'unda denedi: sayfa yeniden açılınca model yine
+  baştan indi, lite sürümdeki açık sorun doğrulandı.
+- Kök neden bulundu: Chrome'un Cache Storage'ı tek dosya ~250 MB'ı
+  aştığında "Unexpected internal error" ile sessizce başarısız oluyor
+  (bu Mac'te 50-900 MB arası dosyalarla ölçülüp doğrulandı). Whisper'ın
+  büyük `encoder`/`decoder` dosyaları bu sınırın üstünde.
+- Çözüm: `web/app/worker.js`'e büyük dosyaları ~128 MB'lık parçalara
+  bölüp ayrı ayrı önbellekleyen bir yardımcı (`ChunkedCache`) eklendi.
+- Doğrulama: önbellek temizlenip yeniden denendiğinde ilk yükleme ~73 sn
+  (parçalama ek yüküyle), sayfa yeniden açıldığında ise ~12 sn'de (yeniden
+  indirme olmadan) hazır oldu.
+- Ayrıntı: `docs/WEB_VERSION_PLAN.md` → "Önbellekleme sorunu — bulundu ve
+  çözüldü".
+- Sıradaki adım: kullanıcının kendi Chrome'unda bu düzeltmeyi bir kez daha
+  denemesi.
+
 ## Web sürümü — fizibilite denemesi (yeni)
 
 - `feature/web-lite-spike` dalında, ayrı bir `web/spike/` klasöründe tek

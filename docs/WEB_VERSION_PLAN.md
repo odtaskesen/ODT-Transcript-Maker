@@ -1,7 +1,7 @@
 # Web sürümü planı
 
-Durum: Lite sürümün ilk hali yazıldı ve bu Mac'te uçtan uca test edildi
-(`web/app/`). Henüz kullanıcının kendi Chrome'unda denenmedi.
+Durum: Lite sürüm yazıldı ve önbellekleme sorunu çözüldü. Kullanıcının
+kendi Chrome'unda bir kez daha denenmesi bekleniyor.
 Tarih: 2026-11-06, güncelleme: 2026-11-09
 
 ## Aşamalar
@@ -91,8 +91,6 @@ Olmayacaklar:
 - Dil seçimi Mac uygulamasındaki gibi olacak mı (Türkçe, İngilizce, Almanca,
   Felemenkçe, İspanyolca)?
 - Site hangi adreste yayınlanacak?
-- Model önbellekte gerçekten kalıcı kalıyor mu? Deneme ortamında kalmadığı
-  görüldü (bkz. Deneme sonucu). Kullanıcının kendi Chrome'unda doğrulanmalı.
 
 ## Deneme sonucu (1. aşama, bu Mac'te)
 
@@ -142,11 +140,33 @@ kullanıcının kendi tarayıcısında ayrıca doğrulanmalı.
   model yeniden yüklenmeden işlendi), uzun bir dosyada iptal ve ardından
   modelin yeniden yüklenip kuyruğun devam etmesi. Hata konsolda görülmedi.
 
+## Önbellekleme sorunu — bulundu ve çözüldü
+
+Kullanıcı kendi Chrome'unda da aynı sorunu doğruladı: sayfa yeniden
+açıldığında model her seferinde yeniden iniyordu. Kök neden bulundu:
+
+Tarayıcıların "Cache Storage" özelliği (sayfaların dosya önbelleklemek için
+kullandığı yerleşik depo), Chrome'da tek bir dosya ~250 MB'ı aştığında
+"Unexpected internal error" hatasıyla yazmayı reddediyor — bu Mac'te ve
+kullanıcının kendi Chrome'unda, 50-900 MB arası dosyalarla ayrı ayrı test
+edilip doğrulandı (200 MB'a kadar sorunsuz, 300 MB ve üstü hep başarısız).
+Whisper'ın `encoder_model_fp16.onnx` (~1,27 GB) ve
+`decoder_model_merged_q4.onnx` (~334 MB) dosyaları bu sınırın üstünde
+olduğu için önbelleğe hiç yazılamıyor, her açılışta yeniden iniyordu. Hata
+sessizdi (yalnızca tarayıcı konsoluna uyarı yazıyordu), kullanıcıya
+görünmüyordu.
+
+**Çözüm:** `web/app/worker.js` içinde, büyük dosyaları ~128 MB'lık
+parçalara bölüp her parçayı ayrı bir önbellek kaydı olarak saklayan basit
+bir yardımcı (`ChunkedCache`) yazıldı; okurken parçalar birleştiriliyor.
+Bu Mac'te doğrulandı: önbellek temizlenip sıfırdan denendiğinde model
+~73 saniyede indi (parçalama ek yükü dahil), sayfa yeniden açıldığında ise
+yalnızca ~12 saniyede (yeniden indirme olmadan) hazır oldu.
+
 ## Sıradaki adım
 
-- Kullanıcının kendi Chrome'unda deneme: gerçek bir video dosyasıyla ve
-  önbellekleme davranışının (sayfa kapatılıp açıldığında model tekrar
-  inip inmediği) doğrulanması.
+- Kullanıcının kendi Chrome'unda bu düzeltmeyi bir kez daha denemesi:
+  sayfa yeniden açıldığında modelin artık hızlı gelip gelmediği.
 - Barındırma/yayın kararı (bkz. Açık sorular).
 
 ## Kaynaklar
